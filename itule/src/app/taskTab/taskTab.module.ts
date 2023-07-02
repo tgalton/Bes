@@ -17,4 +17,4 @@ import { Tab1PageRoutingModule } from './taskTab-routing.module';
   ],
   declarations: [taskTab],
 })
-export class Tab1PageModule {}
+export class TaskTab {}
