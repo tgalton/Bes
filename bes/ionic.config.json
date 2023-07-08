@@ -1,0 +1,7 @@
+{
+  "name": "Itule",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

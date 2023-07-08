@@ -1,0 +1,39 @@
+ion-content {
+    display: flex;
+    margin: auto;  
+    .contener {
+      // @include for_breakpoint(xs){width: 90%}
+      // @include for_breakpoint(sm){width: 80%}
+      // @include for_breakpoint(md){width: 340px}
+      // @include for_breakpoint(lg){width: 340px}
+      // @include for_breakpoint(xl){width: 340px}
+        width: 340px;
+        margin: auto;  
+        justify-content: center;
+        margin-top: 2em;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+  }
+  .separator {
+    margin : 1em;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .separator::before,
+  .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #000;
+    
+  }
+  
+  .separator:not(:empty)::before {
+    margin-right: .25em;
+  }
+  
+  .separator:not(:empty)::after {
+    margin-left: .25em;
+  }
