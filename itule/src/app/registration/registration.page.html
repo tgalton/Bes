@@ -3,31 +3,32 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Register</ion-title>
+    <ion-title>Enregistrement</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <div class="contener">
   <form>
     <ion-item lines="full">
-      <ion-label position="floating">First name</ion-label>
-      <ion-input type="text" required></ion-input>
-    </ion-item>
-    <ion-item lines="full">
-      <ion-label position="floating">Last name</ion-label>
-      <ion-input type="text" required></ion-input>
+      <ion-label position="floating">Pseudo</ion-label>
+      <ion-input name="pseudo" type="text" required #pseudoInput></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Email</ion-label>
-      <ion-input type="text" required></ion-input>
+      <ion-input name="email" type="text" required #emailInput></ion-input>
     </ion-item>
     <ion-item lines="full">
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" required></ion-input>
+      <ion-label position="floating">Mot de passe</ion-label>
+      <ion-input name="password" type="password" required #pwdInput></ion-input>
+    </ion-item>
+    <ion-item lines = "none" *ngIf="showErrors">
+      <p style="color: red; margin: 10px;">Erreur dans les champs !</p>
     </ion-item>
     <ion-row>
       <ion-col>
-        <ion-button type="submit" color="danger" expand="block">Sign Up</ion-button>
+        <ion-button type="submit" color="danger" expand="block" (click)="handleSubmit()">S'inscrire</ion-button>
       </ion-col>
     </ion-row>
   </form>
+  </div>
 </ion-content>
