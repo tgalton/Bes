@@ -1,29 +1,50 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { IonDatetime } from '@ionic/angular';
+import { Task } from '../models/Task';
 
 @Component({
   selector: 'app-taskTab',
   templateUrl: 'taskTab.page.html',
   styleUrls: ['taskTab.page.scss'],
 })
+// @NgModule({
+//
+// })
 export class taskTab {
-  listOfTasks: { name: string; value: 0; point: Number; hidden: boolean }[] = [
-    { name: 'Vaisselle', value: 0, point: 1, hidden: true },
-    { name: 'Aspirateur', value: 0, point: 1, hidden: true },
-    { name: 'Balayer', value: 0, point: 1, hidden: true },
-    { name: 'Courses', value: 0, point: 1, hidden: true },
-    { name: 'Serpillère', value: 0, point: 1, hidden: true },
-    { name: 'Poubelle', value: 0, point: 1, hidden: true },
-    { name: 'Litière', value: 0, point: 1, hidden: true },
-    { name: 'Point bonus', value: 0, point: 1, hidden: true },
-    { name: 'Nettoyer truc', value: 0, point: 1, hidden: true },
-    { name: 'Chercher bois', value: 0, point: 1, hidden: true },
-    { name: 'Ranger Linge', value: 0, point: 1, hidden: true },
-    { name: 'Nettoyer sanitaires', value: 0, point: 1, hidden: true },
+  listOfTasks: Task[] = [
+    new Task('Vaisselle', 0, 1, 1, 1),
+    new Task('Aspirateur', 0, 1, 1, 1),
+    new Task('Balayer', 0, 1, 1, 1),
+    new Task('Courses', 0, 1, 1, 1),
+    new Task('Serpillère', 0, 1, 1, 1),
+    new Task('Poubelle', 0, 1, 1, 1),
+    new Task('Litière', 0, 1, 1, 1),
+    new Task('Point bonus', 0, 1, 1, 1),
+    new Task('Nettoyer truc', 0, 1, 1, 1),
+    new Task('Chercher bois', 0, 1, 1, 1),
+    new Task('Ranger Linge', 0, 1, 1, 1),
   ];
 
   @ViewChild('dateTime', { static: false }) dateTime: IonDatetime;
   today = new Date(Date.now());
+
+  //Form to edit task
+  formEditTask = new FormControl();
+  taskArduousness?: number;
+  taskDuration?: number;
+  taskNewName?: string;
+  taskCurrentName?: string;
+
+  updateTask(task: Task) {
+    // Update the task in the list of tasks
+  }
+
+  editTask(task: Task) {
+    // Save the edited task
+    console.log(this.taskArduousness);
+    console.log(this.taskNewName);
+  }
 
   constructor() {
     this.dateTime = {} as IonDatetime;
@@ -34,32 +55,16 @@ export class taskTab {
     this.dateTime.value = this.today.toISOString();
     this.dateTime.reset();
   }
-  incrementTaskValueOnClick(name: string): void {
-    this.listOfTasks.forEach((task) => {
-      if (task.name === name) {
-        task.value++;
-      }
-    });
-  }
-  decrementTaskValueOnClick(name: string): void {
-    this.listOfTasks.forEach((task) => {
-      if (task.name === name) {
-        if (task.value != 0) {
-          task.value--;
-        }
-      }
-    });
-  }
 
-  editTask(task: string) {}
+  testType(task: Task) {}
 
   // Used at click on button task -> change hidden value for this specifique task like a toggle.
-  openEditTask(task: string) {
-    this.listOfTasks = this.listOfTasks.map((t) => {
-      if (t.name === task) {
-        return { ...t, hidden: !t.hidden };
-      }
-      return t;
-    });
-  }
+  // openEditTask(task: string) {
+  //   this.listOfTasks = this.listOfTasks.map((t) => {
+  //     if (t.name === task) {
+  //       return { ...t, hidden: !t.hidden };
+  //     }
+  //     return t;
+  //   });
+  // }
 }

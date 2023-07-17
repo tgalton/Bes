@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { taskTab } from './taskTab.page';
 
+import { TaskFormComponent } from './components/TaskFormComponent.1';
 import { Tab1PageRoutingModule } from './taskTab-routing.module';
 
 @NgModule({
@@ -15,6 +16,6 @@ import { Tab1PageRoutingModule } from './taskTab-routing.module';
     ExploreContainerComponentModule,
     Tab1PageRoutingModule,
   ],
-  declarations: [taskTab],
+  declarations: [taskTab, TaskFormComponent],
 })
 export class TaskTab {}
