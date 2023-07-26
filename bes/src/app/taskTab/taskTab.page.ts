@@ -40,11 +40,7 @@ export class taskTab {
     // Update the task in the list of tasks
   }
 
-  editTask(task: Task) {
-    // Save the edited task
-    console.log(this.taskArduousness);
-    console.log(this.taskNewName);
-  }
+  editTask(task: Task) {}
 
   constructor() {
     this.dateTime = {} as IonDatetime;

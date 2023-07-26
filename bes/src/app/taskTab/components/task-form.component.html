@@ -20,12 +20,12 @@
       <ion-col size="3">
         <!-- Difficulty (arduousness) -->
         <ion-range aria-label="Chiantisse" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
-          label="Chiantise" [snaps]="true" [ngModel]="taskArduousness" name="taskArduousness"></ion-range>
+          label="Chiantise" [snaps]="true" [(ngModel)]="taskArduousness" name="taskArduousness" (ionChange)="updateTaskValue()"></ion-range>
       </ion-col>
       <ion-col size="3">
         <!-- Time (duration) -->
         <ion-range aria-label="Temps" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true" label="Temps passé"
-          [snaps]="true" [(ngModel)]="taskDuration" name="taskDuration"></ion-range>
+          [snaps]="true" [(ngModel)]="taskDuration" name="taskDuration" (ionChange)="updateTaskValue()"></ion-range>
       </ion-col>
     </ion-row>
     <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
@@ -33,9 +33,9 @@
       <ion-col size="3"><ion-input label="Renommer la tâche" label-placement="floating" fill="outline" [counter]="true"
           maxlength="20" placeholder="Entrer nouveau nom" [ngModel]="taskNewName" name="taskNewName"></ion-input>
       </ion-col>
-      <ion-col size="1"><ion-button expand="block" color="primary" disabled="true">{{taskPoint}}</ion-button></ion-col>
+      <ion-col size="1"><ion-button size="1" color="primary">{{taskPoint}}</ion-button></ion-col>
       <ion-col size="2">
-        <ion-button color="primary" type="submit" (click)="editTask()">
+        <ion-button color="primary" type="submit">
           <ion-icon slot="start" name="checkmark"></ion-icon>
           Valider
         </ion-button>

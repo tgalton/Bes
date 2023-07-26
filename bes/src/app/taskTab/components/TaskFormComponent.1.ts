@@ -39,12 +39,10 @@ export class TaskFormComponent implements OnInit {
   taskNewName: string = '';
 
   ngOnInit() {
-    console.log(this.taskName);
+    this.updateTaskValue();
   }
 
-  //   submitForm() {
-  //     this.taskSubmitted.emit(this.task);
-  //   }
+  submitForm() {}
 
   openEditTask() {
     // Used at click on button task -> change hidden taskValue task like a toggle.
@@ -59,18 +57,12 @@ export class TaskFormComponent implements OnInit {
       this.taskValue = this.taskValue - 1;
     }
   }
-  editTask() {}
-  // }
 
-  // @Output() taskValueChanged: EventEmitter<Task> = new EventEmitter<Task>();
-  // @Output() editTask: EventEmitter<Task> = new EventEmitter<Task>();
+  updateTaskValue() {
+    this.taskPoint = this.calculValue(this.taskArduousness, this.taskDuration);
+  }
 
-  // // Method to emit the updated task taskValue
-  // updatetaskValue() {
-  //   this.taskValueChanged.emit(this.task);
-  // }
-
-  // // Method to emit the edited task
-  // submitForm() {
-  //   this.editTask.emit(this.task);
+  calculValue(taskArduousness: number, taskDuration: number): number {
+    return Math.floor(taskDuration * (1 + 0.3 * taskArduousness));
+  }
 }
