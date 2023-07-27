@@ -38,6 +38,11 @@ export class taskTab {
   taskName?: string;
   taskCurrentName?: string;
 
+  hiddenCreateTask: boolean = true;
+  newTaskArduousness?: number;
+  newTaskDuration?: number;
+  newTaskPoint?: number;
+
   updateTask(task: Task) {
     const index = this.listOfTasks.findIndex((t) => t.id === task.id);
     if (index !== -1) {
@@ -54,10 +59,32 @@ export class taskTab {
   }
   ngOnInit() {}
 
+  // Toggle button
+  onClickButtonCreate() {
+    this.hiddenCreateTask = !this.hiddenCreateTask;
+  }
   // Used to clear datePicker -> current date
   onClearButtonClicked() {
     this.dateTime.value = this.today.toISOString();
     this.dateTime.reset();
+  }
+  updateTaskPoint() {
+    this.newTaskPoint = this.calculPoint(
+      this.newTaskArduousness,
+      this.newTaskDuration
+    );
+  }
+  // Used to directly put a pointTask from Arduousness and Duration
+
+  calculPoint(
+    taskArduousness: number | undefined,
+    taskDuration: number | undefined
+  ): number {
+    if (taskArduousness !== undefined && taskDuration !== undefined) {
+      return Math.floor(taskDuration * (1 + 0.3 * taskArduousness));
+    } else {
+      return 1;
+    }
   }
   onOkayButtonClicked() {}
 

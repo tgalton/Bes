@@ -26,13 +26,39 @@
   </ion-grid>
 
   <ion-grid class="custom-grid">
-    <ion-row class="custom-row">
+    <ion-row class="custom-row" *ngIf="hiddenCreateTask === true">
       <ion-col class="ion-text-center">
         <ion-fab>
-          <ion-fab-button>
+          <ion-fab-button (click)="onClickButtonCreate()">
             <ion-icon name="add"></ion-icon>
           </ion-fab-button>
         </ion-fab>
+      </ion-col>
+    </ion-row>
+    <!-- Line two, to edit task (time and difficulty), hidden without edition -->
+    <ion-row *ngIf="hiddenCreateTask === false">
+      <ion-col size="3">
+        <!-- Difficulty (arduousness) -->
+        <ion-range aria-label="Chiantisse" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
+          label="Chiantise" [snaps]="true" [(ngModel)]="newTaskArduousness" name="taskArduousness" (ionChange)="updateTaskPoint()"></ion-range>
+      </ion-col>
+      <ion-col size="3">
+        <!-- Time (duration) -->
+        <ion-range aria-label="Temps" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true" label="Temps passé"
+          [snaps]="true" [(ngModel)]="newTaskDuration" name="taskDuration" (ionChange)="updateTaskPoint()"></ion-range>
+      </ion-col>
+    </ion-row>
+    <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
+    <ion-row *ngIf="hiddenCreateTask === false">
+      <ion-col size="3"><ion-input label="Renommer la tâche" label-placement="floating" fill="outline" [counter]="true"
+          maxlength="20" placeholder="Entrer nouveau nom" [(ngModel)]="taskNewName" name="taskNewName"></ion-input>
+      </ion-col>
+      <ion-col size="1"><ion-button size="1" color="primary">{{newTaskPoint}}</ion-button></ion-col>
+      <ion-col size="2">
+        <ion-button color="primary" type="submit">
+          <ion-icon slot="start" name="checkmark"></ion-icon>
+          Valider
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
