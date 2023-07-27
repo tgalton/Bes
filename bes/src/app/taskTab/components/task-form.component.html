@@ -20,12 +20,12 @@
       <ion-col size="3">
         <!-- Difficulty (arduousness) -->
         <ion-range aria-label="Chiantisse" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
-          label="Chiantise" [snaps]="true" [(ngModel)]="taskArduousness" name="taskArduousness" (ionChange)="updateTaskValue()"></ion-range>
+          label="Chiantise" [snaps]="true" [(ngModel)]="taskArduousness" name="taskArduousness" (ionChange)="updateTaskPoint()"></ion-range>
       </ion-col>
       <ion-col size="3">
         <!-- Time (duration) -->
         <ion-range aria-label="Temps" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true" label="Temps passé"
-          [snaps]="true" [(ngModel)]="taskDuration" name="taskDuration" (ionChange)="updateTaskValue()"></ion-range>
+          [snaps]="true" [(ngModel)]="taskDuration" name="taskDuration" (ionChange)="updateTaskPoint()"></ion-range>
       </ion-col>
     </ion-row>
     <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->

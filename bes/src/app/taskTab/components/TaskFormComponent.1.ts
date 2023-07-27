@@ -45,7 +45,7 @@ export class TaskFormComponent implements OnInit {
   taskNewName: string = '';
 
   ngOnInit() {
-    this.updateTaskValue();
+    this.updateTaskPoint();
   }
 
   openEditTask() {
@@ -63,11 +63,11 @@ export class TaskFormComponent implements OnInit {
     }
   }
 
-  updateTaskValue() {
-    this.taskPoint = this.calculValue(this.taskArduousness, this.taskDuration);
+  updateTaskPoint() {
+    this.taskPoint = this.calculPoint(this.taskArduousness, this.taskDuration);
   }
-  // Used to directly put a pointValue from Arduousness and Duration
-  calculValue(taskArduousness: number, taskDuration: number): number {
+  // Used to directly put a pointTask from Arduousness and Duration
+  calculPoint(taskArduousness: number, taskDuration: number): number {
     return Math.floor(taskDuration * (1 + 0.3 * taskArduousness));
   }
 
