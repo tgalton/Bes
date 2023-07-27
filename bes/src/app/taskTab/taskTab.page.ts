@@ -13,54 +13,53 @@ import { Task } from '../models/Task';
 // })
 export class taskTab {
   listOfTasks: Task[] = [
-    new Task('Vaisselle', 0, 1, 1, 1),
-    new Task('Aspirateur', 0, 1, 1, 1),
-    new Task('Balayer', 0, 1, 1, 1),
-    new Task('Courses', 0, 1, 1, 1),
-    new Task('Serpillère', 0, 1, 1, 1),
-    new Task('Poubelle', 0, 1, 1, 1),
-    new Task('Litière', 0, 1, 1, 1),
-    new Task('Point bonus', 0, 1, 1, 1),
-    new Task('Nettoyer truc', 0, 1, 1, 1),
-    new Task('Chercher bois', 0, 1, 1, 1),
-    new Task('Ranger Linge', 0, 1, 1, 1),
+    new Task(1, 'Vaisselle', 0, 1, 1, 1),
+    new Task(2, 'Aspirateur', 0, 1, 1, 1),
+    new Task(3, 'Balayer', 0, 1, 1, 1),
+    new Task(4, 'Courses', 0, 1, 1, 1),
+    new Task(5, 'Serpillère', 0, 1, 1, 1),
+    new Task(6, 'Poubelle', 0, 1, 1, 1),
+    new Task(7, 'Litière', 0, 1, 1, 1),
+    new Task(8, 'Point bonus', 0, 1, 1, 1),
+    new Task(9, 'Nettoyer truc', 0, 1, 1, 1),
+    new Task(10, 'Chercher bois', 0, 1, 1, 1),
+    new Task(11, 'Ranger Linge', 0, 1, 1, 1),
   ];
 
-  @ViewChild('dateTime', { static: false }) dateTime: IonDatetime;
+  @ViewChild('dateTime', { static: false }) dateTime!: IonDatetime;
   today = new Date(Date.now());
 
   //Form to edit task
   formEditTask = new FormControl();
+  taskId?: number;
   taskArduousness?: number;
   taskDuration?: number;
   taskNewName?: string;
+  taskName?: string;
   taskCurrentName?: string;
 
   updateTask(task: Task) {
-    // Update the task in the list of tasks
+    const index = this.listOfTasks.findIndex((t) => t.id === task.id);
+    if (index !== -1) {
+      this.listOfTasks[index] = task;
+    }
+    console.log(task);
+    console.log(this.listOfTasks);
   }
 
   editTask(task: Task) {}
 
   constructor() {
-    this.dateTime = {} as IonDatetime;
+    // this.dateTime = {} as IonDatetime;
   }
   ngOnInit() {}
 
+  // Used to clear datePicker -> current date
   onClearButtonClicked() {
     this.dateTime.value = this.today.toISOString();
     this.dateTime.reset();
   }
+  onOkayButtonClicked() {}
 
   testType(task: Task) {}
-
-  // Used at click on button task -> change hidden value for this specifique task like a toggle.
-  // openEditTask(task: string) {
-  //   this.listOfTasks = this.listOfTasks.map((t) => {
-  //     if (t.name === task) {
-  //       return { ...t, hidden: !t.hidden };
-  //     }
-  //     return t;
-  //   });
-  // }
 }

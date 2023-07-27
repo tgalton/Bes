@@ -1,9 +1,9 @@
 export function Required(target: object, propertyKey: string) {
-  // Déclaration d'une variable pour stocker la valeur de la propriété
+  // Déclaration d'une variable statique pour stocker la valeur de la propriété
   let propertyValue: any;
 
-  // Définition d'un nouveau getter et setter pour la propriété
-  Object.defineProperty(target, propertyKey, {
+  // Définition d'un nouveau getter et setter statique pour la propriété
+  Object.defineProperty(target.constructor, propertyKey, {
     get() {
       // Si la valeur de la propriété est indéfinie, une erreur est lancée
       if (propertyValue === undefined) {
@@ -19,7 +19,6 @@ export function Required(target: object, propertyKey: string) {
     configurable: true,
   });
 }
-
 // Ce décorateur `Required` utilise `Object.defineProperty()` pour définir un nouveau getter et setter pour la propriété marquée.
 // Voici ce que font les différentes parties du code :
 // 1. `let propertyValue: any;` - Déclare une variable pour stocker la valeur de la propriété. Cette variable est initialisée à `undefined`.
