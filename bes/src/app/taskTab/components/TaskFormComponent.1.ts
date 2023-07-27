@@ -46,7 +46,6 @@ export class TaskFormComponent implements OnInit {
 
   ngOnInit() {
     this.updateTaskValue();
-    console.log(this.taskName);
   }
 
   openEditTask() {
@@ -73,8 +72,6 @@ export class TaskFormComponent implements OnInit {
   }
 
   submitForm() {
-    console.log(this.taskName);
-    console.log(this.taskNewName);
     const task: Task = new Task(
       // Opérateur de coalescence nulle : si nulle ou false alors on prend l'autre.
       this.taskId,

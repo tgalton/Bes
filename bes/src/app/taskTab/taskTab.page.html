@@ -1,8 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tâche
-    </ion-title>
+    <ion-title> Tâche </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -15,24 +13,45 @@
 
   <ion-grid [fixed]="true" class="ion-grid">
     <ng-container *ngFor="let task of listOfTasks">
-      <task-form [id]="task.id" [arduousness]="task.arduousness" [duration]="task.duration" [point]="task.point" [value]="task.value"
-        [name]="task.name" (taskSubmitted)="updateTask($event)"></task-form>
+      <task-form
+        [id]="task.id"
+        [arduousness]="task.arduousness"
+        [duration]="task.duration"
+        [point]="task.point"
+        [value]="task.value"
+        [name]="task.name"
+        (taskSubmitted)="updateTask($event)"
+      ></task-form>
     </ng-container>
-    <ion-fab>
-      <ion-fab-button>
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
   </ion-grid>
 
+  <ion-grid class="custom-grid">
+    <ion-row class="custom-row">
+      <ion-col class="ion-text-center">
+        <ion-fab>
+          <ion-fab-button>
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   <ion-grid>
-    <ion-datetime #dateTime show-clear-button="true" value="{{ today | date:'yyyy-MM-dd' }}" presentation="date"
-    [preferWheel]="true" style=" display: block; margin-left: auto; margin-right: auto;">
-      <div slot="buttons">
-        <ion-button (click)="onClearButtonClicked()">Clear</ion-button> 
-        <ion-button (click)="onOkayButtonClicked()">OK</ion-button> 
-      </div>
-    </ion-datetime> 
+    <ion-row>
+      <ion-datetime
+        #dateTime
+        show-clear-button="true"
+        value="{{ today | date:'yyyy-MM-dd' }}"
+        presentation="date"
+        [preferWheel]="true"
+        style="display: block; margin-left: auto; margin-right: auto"
+      >
+        <div slot="buttons">
+          <ion-button (click)="onClearButtonClicked()">Clear</ion-button>
+          <ion-button (click)="onOkayButtonClicked()">OK</ion-button>
+        </div>
+      </ion-datetime>
+    </ion-row>
   </ion-grid>
 </ion-content>
 

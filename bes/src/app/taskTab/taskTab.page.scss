@@ -8,7 +8,20 @@ ion-grid {
   --ion-grid-width-xl: 570px;
   --ion-grid-columns: 6;
 }
+.custom-grid {
+  // min-height: 50px; /* Hauteur minimale */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1em;
+  padding-bottom: 5em;
+}
 
+.custom-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 ion-col {
   background-color: #02322c2b;
   // border: solid 1px #fff;
