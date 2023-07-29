@@ -25,35 +25,83 @@
     </ng-container>
   </ion-grid>
 
-  <ion-grid class="custom-grid">
-    <ion-row class="custom-row" *ngIf="hiddenCreateTask === true">
-      <ion-col class="ion-text-center">
+  <ion-grid class="custom-grid" *ngIf="hiddenCreateTask === true">
+    <ion-row class="custom-row">
+      <ion-col class="ion-text-center" size="6">
         <ion-fab>
           <ion-fab-button (click)="onClickButtonCreate()">
             <ion-icon name="add"></ion-icon>
           </ion-fab-button>
         </ion-fab>
       </ion-col>
-    </ion-row>
-    <!-- Line two, to edit task (time and difficulty), hidden without edition -->
-    <ion-row *ngIf="hiddenCreateTask === false">
-      <ion-col size="3">
-        <!-- Difficulty (arduousness) -->
-        <ion-range aria-label="Chiantisse" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
-          label="Chiantise" [snaps]="true" [(ngModel)]="newTaskArduousness" name="taskArduousness" (ionChange)="updateTaskPoint()"></ion-range>
+    </ion-row> 
+  </ion-grid>
+
+  <ion-grid  class="custom-grid"*ngIf="hiddenCreateTask === false">
+    <div [ngStyle]="{ 'margin': '1em', 'width': '80%', 'max-width': '500px', 'display':'flex','justify-content': 'center'}">
+      <ion-fab-button (click)="onClickButtonCreate()">
+        <ion-icon name="chevron-up"></ion-icon>
+      </ion-fab-button>
+    </div>
+    <div [ngStyle]="{'border': hiddenCreateTask === false ? '0.05em solid white' : 'none', 'margin': '1em', 'width': '80%', 'max-width': '500px'}">
+    <!-- Create task (time and difficulty), hidden without creation -->
+    <ion-row class="createTaskRow">
+      <ion-col size="5"
+        ><ion-input
+          label="Nommer la nouvelle tâche"
+          label-placement="floating"
+          fill="outline"
+          [counter]="true"
+          maxlength="20"
+          placeholder="Entrer nouveau nom"
+          [(ngModel)]="taskNewName"
+          name="taskNewName"
+        ></ion-input>
       </ion-col>
-      <ion-col size="3">
+    </ion-row>
+    <ion-row class="createTaskRow">
+      <ion-col size="6">
+        <!-- Difficulty (arduousness) -->
+        <ion-range
+          aria-label="Chiantisse"
+          [min]="0"
+          [max]="10"
+          [value]="5"
+          [pin]="true"
+          [ticks]="true"
+          label="Chiantise"
+          [snaps]="true"
+          [(ngModel)]="newTaskArduousness"
+          name="taskArduousness"
+          (ionChange)="updateTaskPoint()"
+        ></ion-range>
+      </ion-col>
+    </ion-row>
+    <ion-row class="createTaskRow">
+      <ion-col size="6">
         <!-- Time (duration) -->
-        <ion-range aria-label="Temps" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true" label="Temps passé"
-          [snaps]="true" [(ngModel)]="newTaskDuration" name="taskDuration" (ionChange)="updateTaskPoint()"></ion-range>
+        <ion-range
+          aria-label="Temps"
+          [min]="0"
+          [max]="10"
+          [value]="5"
+          [pin]="true"
+          [ticks]="true"
+          label="Temps passé"
+          [snaps]="true"
+          [(ngModel)]="newTaskDuration"
+          name="taskDuration"
+          (ionChange)="updateTaskPoint()"
+        ></ion-range>
       </ion-col>
     </ion-row>
     <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
-    <ion-row *ngIf="hiddenCreateTask === false">
-      <ion-col size="3"><ion-input label="Renommer la tâche" label-placement="floating" fill="outline" [counter]="true"
-          maxlength="20" placeholder="Entrer nouveau nom" [(ngModel)]="taskNewName" name="taskNewName"></ion-input>
-      </ion-col>
-      <ion-col size="1"><ion-button size="1" color="primary">{{newTaskPoint}}</ion-button></ion-col>
+    <ion-row>
+      <ion-col size="1"
+        ><ion-button size="1" color="primary"
+          >{{newTaskPoint}}</ion-button
+        ></ion-col
+      >
       <ion-col size="2">
         <ion-button color="primary" type="submit">
           <ion-icon slot="start" name="checkmark"></ion-icon>
@@ -61,7 +109,9 @@
         </ion-button>
       </ion-col>
     </ion-row>
+  </div>
   </ion-grid>
+
   <ion-grid>
     <ion-row>
       <ion-datetime
