@@ -7,6 +7,7 @@ authors = ["Lucile Lévêque <lululeveq@hotmail.fr>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 Django = "^4.2.3"
+Pillow = "^10.1.0"
 
 [tool.poetry.dev-dependencies]
 
