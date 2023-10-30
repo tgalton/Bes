@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'housework.apps.HouseworkConfig',
+    'account.apps.AccountConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -115,8 +116,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+# TODO pour la prod : https://docs.djangoproject.com/en/4.2/howto/static-files/#deployment
 
 STATIC_URL = 'static/'
+
+# Media files
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-MEDIA_ROOT
+
+MEDIA_ROOT = 'media_files/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
