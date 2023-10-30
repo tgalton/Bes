@@ -40,4 +40,4 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to=user_directory_path)
 
     def __str__(self):
-        return self.name
+        return self.user.username
