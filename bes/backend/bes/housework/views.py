@@ -1,18 +1,27 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .models import House, HouseworkPossibleTask, HouseworkMadeTask, History
 from .serializers import HouseSerializer, HouseworkPossibleTaskSerializer, HouseworkMadeTaskSerializer, HistorySerializer
 
 
+# TODO: ajouter :
+# (login_url="/accounts/login/") au tag "login_required"
+# ou 
+# from django.contrib.auth import views as auth_views
+# path("accounts/login/", auth_views.LoginView.as_view()),
+@login_required
 @csrf_exempt
 def house_list(request):
     """
     List all houses, or create a new house.
     """
+    current_user = request.user
     if request.method == 'GET':
-        houses = House.objects.all()
+        # A user can only see their own houses
+        houses = House.objects.filter(users__id=current_user.id).all()
         serializer = HouseSerializer(houses, many=True)
         return JsonResponse(serializer.data, safe=False)
 
@@ -25,6 +34,7 @@ def house_list(request):
         return JsonResponse(serializer.errors, status=400)
     
 
+@login_required
 @csrf_exempt
 def house_detail(request, pk):
     """
