@@ -1,65 +1,92 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { IonDatetime } from '@ionic/angular';
+import { Task } from '../models/Task';
 
 @Component({
   selector: 'app-taskTab',
   templateUrl: 'taskTab.page.html',
   styleUrls: ['taskTab.page.scss'],
 })
+// @NgModule({
+//
+// })
 export class taskTab {
-  listOfTasks: { name: string; value: 0; point: Number; hidden: boolean }[] = [
-    { name: 'Vaisselle', value: 0, point: 1, hidden: true },
-    { name: 'Aspirateur', value: 0, point: 1, hidden: true },
-    { name: 'Balayer', value: 0, point: 1, hidden: true },
-    { name: 'Courses', value: 0, point: 1, hidden: true },
-    { name: 'Serpillère', value: 0, point: 1, hidden: true },
-    { name: 'Poubelle', value: 0, point: 1, hidden: true },
-    { name: 'Litière', value: 0, point: 1, hidden: true },
-    { name: 'Point bonus', value: 0, point: 1, hidden: true },
-    { name: 'Nettoyer truc', value: 0, point: 1, hidden: true },
-    { name: 'Chercher bois', value: 0, point: 1, hidden: true },
-    { name: 'Ranger Linge', value: 0, point: 1, hidden: true },
-    { name: 'Nettoyer sanitaires', value: 0, point: 1, hidden: true },
+  listOfTasks: Task[] = [
+    new Task(1, 'Vaisselle', 0, 1, 1, 1),
+    new Task(2, 'Aspirateur', 0, 1, 1, 1),
+    new Task(3, 'Balayer', 0, 1, 1, 1),
+    new Task(4, 'Courses', 0, 1, 1, 1),
+    new Task(5, 'Serpillère', 0, 1, 1, 1),
+    new Task(6, 'Poubelle', 0, 1, 1, 1),
+    new Task(7, 'Litière', 0, 1, 1, 1),
+    new Task(8, 'Point bonus', 0, 1, 1, 1),
+    new Task(9, 'Nettoyer truc', 0, 1, 1, 1),
+    new Task(10, 'Chercher bois', 0, 1, 1, 1),
+    new Task(11, 'Ranger Linge', 0, 1, 1, 1),
   ];
 
-  @ViewChild('dateTime', { static: false }) dateTime: IonDatetime;
+  @ViewChild('dateTime', { static: false }) dateTime!: IonDatetime;
   today = new Date(Date.now());
 
+  //Form to edit task
+  formEditTask = new FormControl();
+  taskId?: number;
+  taskArduousness?: number;
+  taskDuration?: number;
+  taskNewName?: string;
+  taskName?: string;
+  taskCurrentName?: string;
+
+  hiddenCreateTask: boolean = true;
+  newTaskArduousness?: number;
+  newTaskDuration?: number;
+  newTaskPoint?: number;
+
+  updateTask(task: Task) {
+    const index = this.listOfTasks.findIndex((t) => t.id === task.id);
+    if (index !== -1) {
+      this.listOfTasks[index] = task;
+    }
+    console.log(task);
+    console.log(this.listOfTasks);
+  }
+
+  editTask(task: Task) {}
+
   constructor() {
-    this.dateTime = {} as IonDatetime;
+    // this.dateTime = {} as IonDatetime;
   }
   ngOnInit() {}
 
+  // Toggle button
+  onClickButtonCreate() {
+    this.hiddenCreateTask = !this.hiddenCreateTask;
+  }
+  // Used to clear datePicker -> current date
   onClearButtonClicked() {
     this.dateTime.value = this.today.toISOString();
     this.dateTime.reset();
   }
-  incrementTaskValueOnClick(name: string): void {
-    this.listOfTasks.forEach((task) => {
-      if (task.name === name) {
-        task.value++;
-      }
-    });
+  updateTaskPoint() {
+    this.newTaskPoint = this.calculPoint(
+      this.newTaskArduousness,
+      this.newTaskDuration
+    );
   }
-  decrementTaskValueOnClick(name: string): void {
-    this.listOfTasks.forEach((task) => {
-      if (task.name === name) {
-        if (task.value != 0) {
-          task.value--;
-        }
-      }
-    });
-  }
+  // Used to directly put a pointTask from Arduousness and Duration
 
-  editTask(task: string) {}
-
-  // Used at click on button task -> change hidden value for this specifique task like a toggle.
-  openEditTask(task: string) {
-    this.listOfTasks = this.listOfTasks.map((t) => {
-      if (t.name === task) {
-        return { ...t, hidden: !t.hidden };
-      }
-      return t;
-    });
+  calculPoint(
+    taskArduousness: number | undefined,
+    taskDuration: number | undefined
+  ): number {
+    if (taskArduousness !== undefined && taskDuration !== undefined) {
+      return Math.floor(taskDuration * (1 + 0.3 * taskArduousness));
+    } else {
+      return 1;
+    }
   }
+  onOkayButtonClicked() {}
+
+  testType(task: Task) {}
 }

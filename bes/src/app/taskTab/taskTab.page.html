@@ -1,8 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tâche
-    </ion-title>
+    <ion-title> Tâche </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,75 +11,124 @@
     </ion-toolbar>
   </ion-header>
 
-
   <ion-grid [fixed]="true" class="ion-grid">
-    <!-- Three lines for each taks -->
-    <div *ngFor="let task of listOfTasks">
-      <div [ngStyle]="{'border': task.hidden === false ? '0.05em solid white' : 'none', 'margin': '1em'}">
-        <!-- Line one, used to register the dealy tasks -->
-        <ion-row>
-          <ion-col size="3"><ion-button expand="block" color="primary" (click)="openEditTask(task.name)">{{task.name}}
-            </ion-button></ion-col>
-          <ion-col size="1"><ion-button size="1" color="primary" [disabled]="task.hidden === false"
-              (click)="incrementTaskValueOnClick(task.name)">+</ion-button></ion-col>
-          <ion-col size="1"><ion-button size="1" color="secondary" [disabled]="task.hidden === false" fill="outline"
-              (click)="decrementTaskValueOnClick(task.name)">-</ion-button></ion-col>
-          <ion-col size="1"><ion-button size="1" color="secondary" fill="outline">{{task.value}}</ion-button></ion-col>
-        </ion-row>
-        <!-- Line two, to edit task (time and difficulty), hidden without edition -->
-        <ion-row *ngIf="task.hidden === false">
-          <ion-col size="3">
-            <ion-range aria-label="Chiantisse" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
-              label="Chiantise" [snaps]="true"></ion-range>
-          </ion-col>
-          <ion-col size="3">
-            <ion-range aria-label="Temps" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
-              label="Temps passé" [snaps]="true"></ion-range>
-          </ion-col>
-        </ion-row>
-        <!-- Line two, to edit task (name, pt, validation ), hidden without edition -->
-        <ion-row *ngIf="task.hidden === false">
-          <ion-col size="3"><ion-input label="Renommer la tâche" label-placement="floating" fill="outline"
-              [counter]="true" maxlength="20" placeholder="Enter text"></ion-input>
-          </ion-col>
-          <ion-col size="1"><ion-button expand="block" color="primary"
-              disabled="true">{{task.point}}</ion-button></ion-col>
-          <ion-col size="2">
-            <ion-button color="primary" (click)="editTask(task.name)">
-              <ion-icon slot="start" name="checkmark"></ion-icon>
-              Valider
-            </ion-button>
-          </ion-col>
-        </ion-row>
-
-
-
-      </div>
-    </div>
-    <ion-row>
-      <ion-fab>
-        <ion-fab-button>
-          <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-    </ion-row>
+    <ng-container *ngFor="let task of listOfTasks">
+      <task-form
+        [id]="task.id"
+        [arduousness]="task.arduousness"
+        [duration]="task.duration"
+        [point]="task.point"
+        [value]="task.value"
+        [name]="task.name"
+        (taskSubmitted)="updateTask($event)"
+      ></task-form>
+    </ng-container>
   </ion-grid>
 
-  <ion-buttons slot="primary">
-    <ion-button fill="outline">
-      Edit
-      <ion-icon slot="end" name="create"></ion-icon>
-    </ion-button>
-  </ion-buttons>
+  <ion-grid class="custom-grid" *ngIf="hiddenCreateTask === true">
+    <ion-row class="custom-row">
+      <ion-col class="ion-text-center" size="6">
+        <ion-fab>
+          <ion-fab-button (click)="onClickButtonCreate()">
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+      </ion-col>
+    </ion-row> 
+  </ion-grid>
 
-
-  <ion-datetime #dateTime show-clear-button="true" value="{{ today | date:'yyyy-MM-dd' }}" presentation="date"
-    [preferWheel]="true" style=" display: block; margin-left: auto; margin-right: auto;">
-    <div slot="buttons">
-      <ion-button (click)="onClearButtonClicked()">Clear</ion-button>
-      <!-- <ion-button (click)="onOkayButtonClicked()">OK</ion-button> -->
+  <ion-grid  class="custom-grid"*ngIf="hiddenCreateTask === false">
+    <div [ngStyle]="{ 'margin': '1em', 'width': '80%', 'max-width': '500px', 'display':'flex','justify-content': 'center'}">
+      <ion-fab-button (click)="onClickButtonCreate()">
+        <ion-icon name="chevron-up"></ion-icon>
+      </ion-fab-button>
     </div>
-  </ion-datetime>
+    <div [ngStyle]="{'border': hiddenCreateTask === false ? '0.05em solid white' : 'none', 'margin': '1em', 'width': '80%', 'max-width': '500px'}">
+    <!-- Create task (time and difficulty), hidden without creation -->
+    <ion-row class="createTaskRow">
+      <ion-col size="5"
+        ><ion-input
+          label="Nommer la nouvelle tâche"
+          label-placement="floating"
+          fill="outline"
+          [counter]="true"
+          maxlength="20"
+          placeholder="Entrer nouveau nom"
+          [(ngModel)]="taskNewName"
+          name="taskNewName"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row class="createTaskRow">
+      <ion-col size="6">
+        <!-- Difficulty (arduousness) -->
+        <ion-range
+          aria-label="Chiantisse"
+          [min]="0"
+          [max]="10"
+          [value]="5"
+          [pin]="true"
+          [ticks]="true"
+          label="Chiantise"
+          [snaps]="true"
+          [(ngModel)]="newTaskArduousness"
+          name="taskArduousness"
+          (ionChange)="updateTaskPoint()"
+        ></ion-range>
+      </ion-col>
+    </ion-row>
+    <ion-row class="createTaskRow">
+      <ion-col size="6">
+        <!-- Time (duration) -->
+        <ion-range
+          aria-label="Temps"
+          [min]="0"
+          [max]="10"
+          [value]="5"
+          [pin]="true"
+          [ticks]="true"
+          label="Temps passé"
+          [snaps]="true"
+          [(ngModel)]="newTaskDuration"
+          name="taskDuration"
+          (ionChange)="updateTaskPoint()"
+        ></ion-range>
+      </ion-col>
+    </ion-row>
+    <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
+    <ion-row>
+      <ion-col size="1"
+        ><ion-button size="1" color="primary"
+          >{{newTaskPoint}}</ion-button
+        ></ion-col
+      >
+      <ion-col size="2">
+        <ion-button color="primary" type="submit">
+          <ion-icon slot="start" name="checkmark"></ion-icon>
+          Valider
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+  </ion-grid>
 
-  <!-- <app-explore-container name="Tab 1 page"></app-explore-container> -->
+  <ion-grid>
+    <ion-row>
+      <ion-datetime
+        #dateTime
+        show-clear-button="true"
+        value="{{ today | date:'yyyy-MM-dd' }}"
+        presentation="date"
+        [preferWheel]="true"
+        style="display: block; margin-left: auto; margin-right: auto"
+      >
+        <div slot="buttons">
+          <ion-button (click)="onClearButtonClicked()">Clear</ion-button>
+          <ion-button (click)="onOkayButtonClicked()">OK</ion-button>
+        </div>
+      </ion-datetime>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+
+<!-- <app-explore-container name="Tab 1 page"></app-explore-container> -->
