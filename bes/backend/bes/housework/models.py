@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -76,10 +77,17 @@ class History(models.Model):
     Object that keep trace of changes done by users.
     
     :param action_log: A log that explains who changes what.
+    :param action_date: The date when the log has been created.
     :param house: The place where something has been changed. 
     :type action_log: models.CharField
+    :type action_date: models.DateField
     :type house: models.ForeignKey
     """
     action_log = models.CharField(max_length=500)
+    action_date = models.DateField(auto_now_add=True)
     house = models.ForeignKey(House, on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name_plural = "Histories"
+        ordering = ["-action_date"]
     
