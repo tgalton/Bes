@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import HouseScore, UserProfile
 
-# Register your models here.
+admin.site.register(HouseScore)
+admin.site.register(UserProfile)
