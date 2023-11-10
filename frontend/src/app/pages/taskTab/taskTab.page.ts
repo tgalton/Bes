@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { IonDatetime } from '@ionic/angular';
-import { Task } from '../models/Task';
+import { Task } from '../../models/Task';
 
 @Component({
   selector: 'app-taskTab',
