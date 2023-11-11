@@ -1,11 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
+import { Title } from '@angular/platform-browser';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { HomePageRoutingModule } from './home-routing.module';
-
 import { HomePage } from './home.page';
 
 @NgModule({
@@ -13,8 +14,16 @@ import { HomePage } from './home.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule
+    HomePageRoutingModule,
+    SharedModule,
   ],
-  declarations: [HomePage]
+  declarations: [HomePage],
 })
-export class HomePageModule {}
+export class HomePageModule implements OnInit {
+  constructor(private titleService: Title) {}
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Accueil');
+    console.log(this.titleService.getTitle);
+  }
+}

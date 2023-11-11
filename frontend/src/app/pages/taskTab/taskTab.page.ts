@@ -8,9 +8,6 @@ import { Task } from '../../models/Task';
   templateUrl: 'taskTab.page.html',
   styleUrls: ['taskTab.page.scss'],
 })
-// @NgModule({
-//
-// })
 export class taskTab {
   listOfTasks: Task[] = [
     new Task(1, 'Vaisselle', 0, 1, 1, 1),

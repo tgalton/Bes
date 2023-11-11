@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-header',
@@ -6,7 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor() {}
+  pageTitle: string = '';
 
-  ngOnInit() {}
+  constructor(private titleService: Title) {}
+
+  ngOnInit() {
+    this.pageTitle = this.titleService.getTitle();
+    console.log(this.pageTitle);
+  }
 }

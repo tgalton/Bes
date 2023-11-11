@@ -1,8 +1,11 @@
-<ion-header [translucent]="true">
+<app-header></app-header>
+
+
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title> Tâche </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
@@ -13,15 +16,8 @@
 
   <ion-grid [fixed]="true" class="ion-grid">
     <ng-container *ngFor="let task of listOfTasks">
-      <task-form
-        [id]="task.id"
-        [arduousness]="task.arduousness"
-        [duration]="task.duration"
-        [point]="task.point"
-        [value]="task.value"
-        [name]="task.name"
-        (taskSubmitted)="updateTask($event)"
-      ></task-form>
+      <task-form [id]="task.id" [arduousness]="task.arduousness" [duration]="task.duration" [point]="task.point"
+        [value]="task.value" [name]="task.name" (taskSubmitted)="updateTask($event)"></task-form>
     </ng-container>
   </ion-grid>
 
@@ -34,94 +30,58 @@
           </ion-fab-button>
         </ion-fab>
       </ion-col>
-    </ion-row> 
+    </ion-row>
   </ion-grid>
 
-  <ion-grid  class="custom-grid"*ngIf="hiddenCreateTask === false">
-    <div [ngStyle]="{ 'margin': '1em', 'width': '80%', 'max-width': '500px', 'display':'flex','justify-content': 'center'}">
+  <ion-grid class="custom-grid" *ngIf="hiddenCreateTask === false">
+    <div
+      [ngStyle]="{ 'margin': '1em', 'width': '80%', 'max-width': '500px', 'display':'flex','justify-content': 'center'}">
       <ion-fab-button (click)="onClickButtonCreate()">
         <ion-icon name="chevron-up"></ion-icon>
       </ion-fab-button>
     </div>
-    <div [ngStyle]="{'border': hiddenCreateTask === false ? '0.05em solid white' : 'none', 'margin': '1em', 'width': '80%', 'max-width': '500px'}">
-    <!-- Create task (time and difficulty), hidden without creation -->
-    <ion-row class="createTaskRow">
-      <ion-col size="5"
-        ><ion-input
-          label="Nommer la nouvelle tâche"
-          label-placement="floating"
-          fill="outline"
-          [counter]="true"
-          maxlength="20"
-          placeholder="Entrer nouveau nom"
-          [(ngModel)]="taskNewName"
-          name="taskNewName"
-        ></ion-input>
-      </ion-col>
-    </ion-row>
-    <ion-row class="createTaskRow">
-      <ion-col size="6">
-        <!-- Difficulty (arduousness) -->
-        <ion-range
-          aria-label="Chiantisse"
-          [min]="0"
-          [max]="10"
-          [value]="5"
-          [pin]="true"
-          [ticks]="true"
-          label="Chiantise"
-          [snaps]="true"
-          [(ngModel)]="newTaskArduousness"
-          name="taskArduousness"
-          (ionChange)="updateTaskPoint()"
-        ></ion-range>
-      </ion-col>
-    </ion-row>
-    <ion-row class="createTaskRow">
-      <ion-col size="6">
-        <!-- Time (duration) -->
-        <ion-range
-          aria-label="Temps"
-          [min]="0"
-          [max]="10"
-          [value]="5"
-          [pin]="true"
-          [ticks]="true"
-          label="Temps passé"
-          [snaps]="true"
-          [(ngModel)]="newTaskDuration"
-          name="taskDuration"
-          (ionChange)="updateTaskPoint()"
-        ></ion-range>
-      </ion-col>
-    </ion-row>
-    <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
-    <ion-row>
-      <ion-col size="1"
-        ><ion-button size="1" color="primary"
-          >{{newTaskPoint}}</ion-button
-        ></ion-col
-      >
-      <ion-col size="2">
-        <ion-button color="primary" type="submit">
-          <ion-icon slot="start" name="checkmark"></ion-icon>
-          Valider
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </div>
+    <div
+      [ngStyle]="{'border': hiddenCreateTask === false ? '0.05em solid white' : 'none', 'margin': '1em', 'width': '80%', 'max-width': '500px'}">
+      <!-- Create task (time and difficulty), hidden without creation -->
+      <ion-row class="createTaskRow">
+        <ion-col size="5"><ion-input label="Nommer la nouvelle tâche" label-placement="floating" fill="outline"
+            [counter]="true" maxlength="20" placeholder="Entrer nouveau nom" [(ngModel)]="taskNewName"
+            name="taskNewName"></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row class="createTaskRow">
+        <ion-col size="6">
+          <!-- Difficulty (arduousness) -->
+          <ion-range aria-label="Chiantisse" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true"
+            label="Chiantise" [snaps]="true" [(ngModel)]="newTaskArduousness" name="taskArduousness"
+            (ionChange)="updateTaskPoint()"></ion-range>
+        </ion-col>
+      </ion-row>
+      <ion-row class="createTaskRow">
+        <ion-col size="6">
+          <!-- Time (duration) -->
+          <ion-range aria-label="Temps" [min]="0" [max]="10" [value]="5" [pin]="true" [ticks]="true" label="Temps passé"
+            [snaps]="true" [(ngModel)]="newTaskDuration" name="taskDuration"
+            (ionChange)="updateTaskPoint()"></ion-range>
+        </ion-col>
+      </ion-row>
+      <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
+      <ion-row>
+        <ion-col size="1"><ion-button size="1" color="primary">{{newTaskPoint}}</ion-button></ion-col>
+        <ion-col size="2">
+          <ion-button color="primary" type="submit">
+            <ion-icon slot="start" name="checkmark"></ion-icon>
+            Valider
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
   </ion-grid>
 
   <ion-grid>
     <ion-row>
-      <ion-datetime
-        #dateTime
-        show-clear-button="true"
-        value="{{ today | date:'yyyy-MM-dd' }}"
-        presentation="date"
-        [preferWheel]="true"
-        style="display: block; margin-left: auto; margin-right: auto"
-      >
+      <ion-datetime #dateTime show-clear-button="true" value="{{ today | date:'yyyy-MM-dd' }}" presentation="date"
+        [preferWheel]="true" style="display: block; margin-left: auto; margin-right: auto">
         <div slot="buttons">
           <ion-button (click)="onClearButtonClicked()">Clear</ion-button>
           <ion-button (click)="onOkayButtonClicked()">OK</ion-button>

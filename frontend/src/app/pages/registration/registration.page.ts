@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { IonInput } from '@ionic/angular';
 
 @Component({
@@ -11,9 +12,12 @@ export class RegistrationPage implements OnInit {
   @ViewChild('emailInput', { static: true }) emailInput!: IonInput;
   @ViewChild('pwdInput', { static: true }) pwdInput!: IonInput;
 
-  constructor() {}
+  constructor(private titleService: Title) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    this.titleService.setTitle('Tâches');
+    console.log(this.titleService.getTitle);
+  }
 
   showErrors = false;
   // TODO TGA : Ajouter des messages d'erreurs.

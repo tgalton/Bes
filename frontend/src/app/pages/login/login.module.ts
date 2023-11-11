@@ -1,11 +1,13 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
 import { LoginPageRoutingModule } from './login-routing.module';
 
+import { Title } from '@angular/platform-browser';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { LoginPage } from './login.page';
 
 @NgModule({
@@ -13,8 +15,16 @@ import { LoginPage } from './login.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    LoginPageRoutingModule
+    LoginPageRoutingModule,
+    SharedModule,
   ],
-  declarations: [LoginPage]
+  declarations: [LoginPage],
 })
-export class LoginPageModule {}
+export class LoginPageModule implements OnInit {
+  constructor(private titleService: Title) {}
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Connexion');
+    console.log(this.titleService.getTitle);
+  }
+}

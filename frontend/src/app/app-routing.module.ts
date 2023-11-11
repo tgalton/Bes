@@ -5,31 +5,31 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () =>
-      import('../pages/home/home.module').then((m) => m.HomePageModule),
+      import('./pages/home/home.module').then((m) => m.HomePageModule),
   },
   {
     path: 'registration',
     loadChildren: () =>
-      import('../pages/registration/registration.module').then(
+      import('./pages/registration/registration.module').then(
         (m) => m.RegistrationPageModule
       ),
   },
   {
     path: 'forgot-password',
     loadChildren: () =>
-      import('../pages/forgot-password/forgot-password.module').then(
+      import('./pages/forgot-password/forgot-password.module').then(
         (m) => m.ForgotPasswordPageModule
       ),
   },
   {
     path: 'taskTab',
     loadChildren: () =>
-      import('../pages/taskTab/taskTab.module').then((m) => m.TaskTab),
+      import('./pages/taskTab/taskTab.module').then((m) => m.TaskTab),
   },
   {
     path: 'login',
     loadChildren: () =>
-      import('../pages/login/login.module').then((m) => m.LoginPageModule),
+      import('./pages/login/login.module').then((m) => m.LoginPageModule),
   },
 ];
 
