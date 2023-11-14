@@ -1,0 +1,26 @@
+<ion-footer>
+  <ion-toolbar>
+  <ion-tabs>
+    <ion-tab-bar>
+      <ion-tab-button tab="bed" *ngIf="pageTitle === 'Tâches'">
+        <ion-icon name="bed"></ion-icon>
+        Tâches
+      </ion-tab-button>
+      <ion-tab-button tab="home" *ngIf="pageTitle === 'Tâches'">
+        <ion-icon name="home"></ion-icon>
+        Foyer
+      </ion-tab-button>
+      <ion-tab-button tab="bar-chart" *ngIf="pageTitle === 'Tâches'">
+        <ion-icon name="bar-chart"></ion-icon>
+        Statistique
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+  </ion-toolbar>
+</ion-footer>
+
+<!-- <ion-footer>
+  <ion-toolbar>
+    <ion-title>Footer</ion-title>
+  </ion-toolbar>
+</ion-footer> -->
