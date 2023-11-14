@@ -20,11 +20,4 @@ import { LoginPage } from './login.page';
   ],
   declarations: [LoginPage],
 })
-export class LoginPageModule implements OnInit {
-  constructor(private titleService: Title) {}
-
-  ngOnInit(): void {
-    this.titleService.setTitle('Connexion');
-    console.log(this.titleService.getTitle);
-  }
-}
+export class LoginPageModule {}

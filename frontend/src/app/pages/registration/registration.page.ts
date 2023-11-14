@@ -15,7 +15,7 @@ export class RegistrationPage implements OnInit {
   constructor(private titleService: Title) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle('Tâches');
+    this.titleService.setTitle('Inscription');
     console.log(this.titleService.getTitle);
   }
 

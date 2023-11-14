@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { IonDatetime } from '@ionic/angular';
 import { Task } from '../../models/Task';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-taskTab',
@@ -51,10 +52,12 @@ export class taskTab {
 
   editTask(task: Task) {}
 
-  constructor() {
-    // this.dateTime = {} as IonDatetime;
+  constructor(private titleService: Title) {}
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Tâches');
+    console.log(this.titleService.getTitle);
   }
-  ngOnInit() {}
 
   // Toggle button
   onClickButtonCreate() {

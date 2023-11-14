@@ -19,11 +19,4 @@ import { HomePage } from './home.page';
   ],
   declarations: [HomePage],
 })
-export class HomePageModule implements OnInit {
-  constructor(private titleService: Title) {}
-
-  ngOnInit(): void {
-    this.titleService.setTitle('Accueil');
-    console.log(this.titleService.getTitle);
-  }
-}
+export class HomePageModule {}

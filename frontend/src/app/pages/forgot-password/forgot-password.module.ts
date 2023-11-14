@@ -20,11 +20,4 @@ import { ForgotPasswordPage } from './forgot-password.page';
   ],
   declarations: [ForgotPasswordPage],
 })
-export class ForgotPasswordPageModule implements OnInit {
-  constructor(private titleService: Title) {}
-
-  ngOnInit(): void {
-    this.titleService.setTitle('Mot de passe oublié');
-    console.log(this.titleService.getTitle);
-  }
-}
+export class ForgotPasswordPageModule {}
