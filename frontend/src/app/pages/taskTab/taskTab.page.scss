@@ -9,7 +9,7 @@ ion-grid {
   --ion-grid-columns: 6;
 }
 
-.createTaskRow{
+.createTaskRow {
   max-width: 500px;
   width: 80%;
 }
@@ -19,7 +19,7 @@ ion-grid {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction:column;
+  flex-direction: column;
   margin-bottom: 1em;
   padding-bottom: 5em;
 }
@@ -34,7 +34,7 @@ ion-grid {
 }
 
 ion-col {
-  background-color: #02322c2b;
+  // background-color: #02322c2b;
   color: #fff;
   text-align: center;
 }
