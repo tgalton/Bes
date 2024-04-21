@@ -12,18 +12,10 @@ $RECYCLE.BIN/
 *.log
 log.txt
 
+
 /.sourcemaps
 /.versions
 /coverage
-
-# Python
-__pycache__/
-
-# Poetry
-poetry.lock
-
-# Development DB
-db.sqlite3
 
 # Ionic
 /.ionic
@@ -59,6 +51,7 @@ yarn-error.log
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+
 
 # Miscellaneous
 /.angular

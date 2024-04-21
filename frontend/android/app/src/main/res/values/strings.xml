@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">bes</string>
+    <string name="title_activity_main">bes</string>
+    <string name="package_name">ionic.bes</string>
+    <string name="custom_url_scheme">ionic.bes</string>
+</resources>

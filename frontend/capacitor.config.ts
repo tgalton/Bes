@@ -1,12 +1,9 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'Itule',
-  webDir: 'www',
-  server: {
-    androidScheme: 'https'
-  }
+  appId: 'ionic.bes',
+  appName: 'bes',
+  webDir: 'www'
 };
 
 export default config;

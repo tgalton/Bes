@@ -1,20 +1,18 @@
-<app-header></app-header>
 
 <ion-content class="auth-form">
   <div class="contener">
     <ion-grid>
       <ion-row>
         <ion-col align-self-center>
-          <ion-button [routerLink]="['/registration']" expand="block" color="primary">S'enregistrer</ion-button>
+          <ion-button [routerLink]="['/register']" expand="block" color="primary">S'enregistrer</ion-button>
           <!-- <span class="divider line one-line">or</span> -->
           <div class="separator">Ou</div>
           <div style="text-align: center; margin-bottom: 0.5em;">
             <span class="already">Déjà utilisateur ?</span>
           </div>
-          <ion-button [routerLink]="['/login']" expand="block" color="danger">Se connecter</ion-button>
+          <ion-button [routerLink]="['/login']" expand="block" color="secondary">Se connecter</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
   </div>
-  <app-footer></app-footer>
 </ion-content>

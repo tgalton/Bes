@@ -1,7 +1,7 @@
 {
-  "name": "Itule",
+  "name": "bes",
   "integrations": {
     "capacitor": {}
   },
-  "type": "angular"
+  "type": "angular-standalone"
 }

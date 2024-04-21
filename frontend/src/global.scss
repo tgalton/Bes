@@ -16,7 +16,7 @@
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
-@import '@ionic/angular/css/display.css';
+@import "@ionic/angular/css/display.css";
 
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
@@ -24,28 +24,3 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-
-// **** Inspired by : https://stackoverflow.com/questions/36957904/media-queries-in-sass ****
-$media_queries : (
-    'xs'    : unquote("only screen and (max-width: 575px)"),
-    'sm'    : unquote("only screen and (max-width: 767px) and (min-width: 576px)"),
-    'md'    : unquote("only screen and (max-width: 991px) and (min-width: 768px)"),
-    'lg'    : unquote("only screen and (max-width: 1199px) and (min-width: 992px)"),
-    'xl'    : unquote("only screen and (min-width: 1200px)"),
-);
-
-@mixin for_breakpoint($breakpoints) {
-    $conditions : ();
-    @each $breakpoint in $breakpoints {
-        // If the key exists in the map
-        $conditions: append(
-            $conditions,
-            #{inspect(map-get($media_queries, $breakpoint))},
-            comma
-        );
-    }
-
-    @media #{$conditions} {
-        @content;
-    }
-}
