@@ -62,7 +62,7 @@ export class LoginPage  {
     this.authService.authenticateUser(email, password).subscribe({
       next: (success) => {
         if (success) {
-          this.router.navigate(['/tasktab']);
+          this.router.navigate(['tabs/tasktab']);
         } else {
           this.loginError = true;
           this.presentToast("Échec de l'authentification. Veuillez vérifier vos identifiants.");
