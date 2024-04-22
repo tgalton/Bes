@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRow, IonButton, IonCol, IonInput, ToastController, IonText } from '@ionic/angular/standalone';
-import { AuthService } from 'src/app/services/auth.service';
-import { Router } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl } from "@angular/forms";
+import { Router } from "@angular/router";
+import { IonText, IonInput, IonCol, IonButton, IonRow, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, ToastController, IonRouterOutlet, IonApp } from "@ionic/angular/standalone";
+import { AuthService } from "src/app/services/auth.service";
+import { HeaderComponent } from "../../shared/header/header.component";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
-  standalone: true,
-  imports: [IonText, IonInput, IonCol, IonButton, IonRow, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule]
+    selector: 'app-login',
+    templateUrl: './login.page.html',
+    styleUrls: ['./login.page.scss'],
+    standalone: true,
+    imports: [IonApp, IonRouterOutlet, IonText, IonInput, IonCol, IonButton, IonRow, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule, HeaderComponent]
 })
 export class LoginPage  {
 

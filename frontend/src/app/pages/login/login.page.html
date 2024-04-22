@@ -1,3 +1,5 @@
+
+<app-header></app-header>
 <ion-content>
   <div class="contener">
     <form (ngSubmit)="login()" [formGroup]="loginForm">
@@ -14,7 +16,7 @@
       </ion-item>
       <ion-row>
         <ion-col>
-          <ion-button class="ion-margin-top ion-margin-bottom" type="submit" color="danger" expand="block">Connexion</ion-button>
+          <ion-button type="submit" color="danger" expand="block">Connexion</ion-button>
           <a routerLink="/forgot-password" class="small-text">Forgot Password?</a>
         </ion-col>
       </ion-row>

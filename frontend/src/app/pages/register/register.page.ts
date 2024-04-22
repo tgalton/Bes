@@ -2,17 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { IonContent, IonItem, IonInput, IonRow, IonCol, IonButton, ToastController } from "@ionic/angular/standalone";
+import { IonContent, IonItem, IonInput, IonRow, IonCol, IonButton, ToastController, IonHeader, IonToolbar, IonTitle } from "@ionic/angular/standalone";
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
+import { HeaderComponent } from "../../shared/header/header.component";
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.page.html',
-  styleUrls: ['./register.page.scss'],
-  standalone: true,
-  imports: [IonRow, IonContent, IonItem, IonInput, IonRow, IonCol, IonButton, CommonModule, ReactiveFormsModule ]
+    selector: 'app-register',
+    templateUrl: './register.page.html',
+    styleUrls: ['./register.page.scss'],
+    standalone: true,
+    imports: [IonTitle, IonToolbar, IonHeader, IonRow, IonContent, IonItem, IonInput, IonRow, IonCol, IonButton, CommonModule, ReactiveFormsModule, HeaderComponent]
 })
 export class RegisterComponent {
   form: FormGroup;

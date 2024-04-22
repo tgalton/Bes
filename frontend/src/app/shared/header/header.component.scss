@@ -1,0 +1,22 @@
+/* Styles pour ion-header pour garantir la largeur complète et éviter les problèmes de box-sizing */
+ion-header {
+    width: 100%; // Assure que le header prend toute la largeur disponible
+    box-sizing: border-box; // Assure que le padding et le border sont inclus dans la largeur définie
+  }
+  
+  /* Styles pour ion-toolbar pour centrer le contenu et ajuster l'apparence */
+  ion-toolbar {
+    justify-content: center; // Centre les éléments à l'intérieur de la toolbar
+    background-color: #f8f8f8; // Définit une couleur de fond claire pour le header
+    color: #333; // Définit la couleur du texte à une teinte foncée pour le contraste
+    padding: 10px 20px; // Ajoute un padding pour un peu d'espace autour des éléments intérieurs
+    margin: 0; // Supprime les marges pour empêcher tout décalage externe
+  }
+  
+  /* Responsive design pour s'adapter aux tailles d'écran plus petites */
+  @media (max-width: 600px) {
+    ion-toolbar {
+      padding: 10px; // Réduit le padding sur les petits écrans pour économiser de l'espace
+    }
+  }
+  

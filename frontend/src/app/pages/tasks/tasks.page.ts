@@ -4,13 +4,14 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonFabButton, IonIcon, IonGrid, IonCol, IonRow, IonButton, IonFab, IonDatetime } from '@ionic/angular/standalone';
 import { Task } from 'src/app/models/task';
 import { TaskComponent } from './taskComponent/task/task.component';
+import { HeaderComponent } from "../../shared/header/header.component";
 
 @Component({
-  selector: 'app-tasks',
-  templateUrl: './tasks.page.html',
-  styleUrls: ['./tasks.page.scss'],
-  standalone: true,
-  imports: [TaskComponent, IonFab, IonButton, IonRow, IonCol, IonGrid, IonIcon, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+    selector: 'app-tasks',
+    templateUrl: './tasks.page.html',
+    styleUrls: ['./tasks.page.scss'],
+    standalone: true,
+    imports: [TaskComponent, IonFab, IonButton, IonRow, IonCol, IonGrid, IonIcon, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HeaderComponent]
 })
 
 export class TasksPage {
