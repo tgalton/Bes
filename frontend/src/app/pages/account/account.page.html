@@ -1,8 +1,34 @@
 <app-header></app-header>
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">account</ion-title>
-    </ion-toolbar>
-  </ion-header>
+
+<ion-content padding>
+  <!-- Display user information -->
+  <ion-item>
+    <!-- <ion-avatar item-start [src]="user?.hearths?.[0]"></ion-avatar> -->
+    <ion-label>
+      <h2>{{ user?.username }}</h2>
+      <p>{{ user?.email }}</p>
+    </ion-label>
+  </ion-item>
+
+  <!-- Update form -->
+  <form [formGroup]="accountForm" (ngSubmit)="updateProfile()">
+    <ion-item>
+      <ion-label position="floating">Username</ion-label>
+      <input formControlName="username" type="text" [value]="user?.username" />
+    </ion-item>
+    <!-- Disable email input and display current email -->
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <input formControlName="email" type="email" [disabled]="true" [value]="user?.email" />
+    </ion-item>
+
+    <!-- Avatar selection -->
+    <ion-item>
+      <ion-label position="floating">Avatar</ion-label>
+      <!-- Add your avatar selection logic here, e.g., a dropdown list or image picker -->
+      <input formControlName="avatar" type="hidden" />
+    </ion-item>
+
+    <button ion-button type="submit" [disabled]="!accountForm.valid">Update</button>
+  </form>
 </ion-content>
