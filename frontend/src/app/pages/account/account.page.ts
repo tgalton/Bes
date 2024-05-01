@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -16,7 +17,6 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-// import * as icons from 'scripts/generate-icon-list';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -47,7 +47,8 @@ export class AccountPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private http: HttpClient
   ) {
     this.accountForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -61,7 +62,10 @@ export class AccountPage implements OnInit {
 
   ngOnInit() {
     // Récupération de la liste d'icones d'avatars
-    // const iconList = icons;
+    this.http.get('path-to-your-icons.json').subscribe((data) => {
+      const iconList = data;
+    });
+
     this.authService.isLogged().subscribe((isLogged) => {
       if (isLogged) {
         const email = localStorage.getItem('userEmail'); // Assume you store the email in localStorage on login
