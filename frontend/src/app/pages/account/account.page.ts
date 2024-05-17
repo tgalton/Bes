@@ -17,9 +17,11 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { Store, select } from '@ngrx/store';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
+import { selectUser } from 'src/app/store/reducers/user.reducer';
 import { HeaderComponent } from '../../shared/header/header.component';
 
 @Component({
@@ -43,12 +45,13 @@ import { HeaderComponent } from '../../shared/header/header.component';
 })
 export class AccountPage implements OnInit {
   accountForm: FormGroup;
-  user: User | undefined;
+  user: User | null | undefined;
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private userService: UserService,
-    private http: HttpClient
+    private http: HttpClient,
+    private store: Store // Inject the Store here
   ) {
     this.accountForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -68,17 +71,14 @@ export class AccountPage implements OnInit {
 
     this.authService.isLogged().subscribe((isLogged) => {
       if (isLogged) {
-        const email = localStorage.getItem('userEmail'); // Assume you store the email in localStorage on login
-        if (email) {
-          this.user = this.userService.users.find(
-            (u: User) => u.email === email
-          );
-          this.accountForm.patchValue({
-            username: this.user?.username,
-            email: this.user?.email,
-            avatar: this.user?.hearths?.[0], // Assuming hearths array contains avatar paths
-          });
-        }
+        // Si l'utilisateur est connecté, récupère les informations de l'utilisateur via le store
+        this.store.pipe(select(selectUser)).subscribe((user) => {
+          if (user !== null) {
+            this.user = user;
+            console.log(user);
+            // this.accountForm.patchValue(this.user);
+          }
+        });
       }
     });
   }

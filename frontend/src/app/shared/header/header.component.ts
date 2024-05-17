@@ -1,24 +1,44 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import {
+  IonButton,
+  IonButtons,
+  IonHeader,
+  IonIcon,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
+import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs/operators';
-import { IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import * as AuthActions from '../../store/actions/auth.actions'; // Update the path according to your structure
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [IonToolbar, IonTitle, IonHeader, ]
+  imports: [IonButtons, IonToolbar, IonTitle, IonHeader, IonButton, IonIcon],
 })
 export class HeaderComponent {
-  title = 'Error Title'; // Titre par défaut
+  title = 'Error Title'; // Default title
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(() => this.getActiveRoute(this.activatedRoute)),
-      map(route => route.snapshot.data['title'] || 'Default Title')
-    ).subscribe(title => this.title = title);
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private store: Store // Inject the store here
+  ) {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => this.getActiveRoute(this.activatedRoute)),
+        map((route) => route.snapshot.data['title'] || 'Default Title')
+      )
+      .subscribe((title) => (this.title = title));
+  }
+
+  logout() {
+    console.log('testDispatchLogout');
+    this.store.dispatch(AuthActions.logout());
   }
 
   private getActiveRoute(activatedRoute: ActivatedRoute): ActivatedRoute {
