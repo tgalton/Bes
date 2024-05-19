@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -18,6 +18,7 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { Store, select } from '@ngrx/store';
+import { take } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -41,6 +42,7 @@ import { HeaderComponent } from '../../shared/header/header.component';
     FormsModule,
     HeaderComponent,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
 })
 export class AccountPage implements OnInit {
@@ -51,7 +53,7 @@ export class AccountPage implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private http: HttpClient,
-    private store: Store // Inject the Store here
+    private store: Store
   ) {
     this.accountForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -65,22 +67,25 @@ export class AccountPage implements OnInit {
 
   ngOnInit() {
     // Récupération de la liste d'icones d'avatars
-    this.http.get('path-to-your-icons.json').subscribe((data) => {
+    this.http.get('./../../assets/icons.json').subscribe((data) => {
       const iconList = data;
     });
 
-    this.authService.isLogged().subscribe((isLogged) => {
-      if (isLogged) {
-        // Si l'utilisateur est connecté, récupère les informations de l'utilisateur via le store
-        this.store.pipe(select(selectUser)).subscribe((user) => {
-          if (user !== null) {
-            this.user = user;
-            console.log(user);
-            // this.accountForm.patchValue(this.user);
-          }
-        });
-      }
-    });
+    this.authService
+      .isLogged()
+      .pipe(take(1))
+      .subscribe((isLogged) => {
+        if (isLogged) {
+          // Si l'utilisateur est connecté, récupère les informations de l'utilisateur via le store
+          this.store.pipe(select(selectUser), take(1)).subscribe((user) => {
+            if (user !== null) {
+              this.user = user;
+              console.log(user);
+              // this.accountForm.patchValue(this.user);
+            }
+          });
+        }
+      });
   }
 
   updateProfile() {
