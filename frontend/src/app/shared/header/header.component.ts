@@ -9,6 +9,8 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { Store } from '@ngrx/store';
+import { addIcons } from 'ionicons';
+import { logOutOutline } from 'ionicons/icons';
 import { filter, map } from 'rxjs/operators';
 import * as AuthActions from '../../store/actions/auth.actions'; // Update the path according to your structure
 
@@ -27,6 +29,7 @@ export class HeaderComponent {
     private activatedRoute: ActivatedRoute,
     private store: Store // Inject the store here
   ) {
+    addIcons({ logOutOutline });
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),

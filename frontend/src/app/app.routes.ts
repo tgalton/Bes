@@ -1,48 +1,56 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 
-
-
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 
-  { path: 'home',
-    loadComponent: () => import('./pages/home/home.page').then(m => m.HomePage), 
-    data: { title: 'Accueil' }
+  {
+    path: 'home',
+    loadComponent: () =>
+      import('./pages/home/home.page').then((m) => m.HomePage),
+    data: { title: 'Accueil' },
   },
 
-  { path: 'register', 
-    loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterComponent), 
-    data: { title: 'Enregistrement' }
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./pages/register/register.page').then((m) => m.RegisterComponent),
+    data: { title: 'Enregistrement' },
   },
 
-  { path: 'login', 
-    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage), 
-    data: { title: 'Connexion'}
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login.page').then((m) => m.LoginPage),
+    data: { title: 'Connexion' },
   },
 
   {
     path: 'tabs',
-    loadComponent: () => import('./shared/tabs/tabs.component').then(m => m.TabsComponent),
+    loadComponent: () =>
+      import('./shared/tabs/tabs.component').then((m) => m.TabsComponent),
     canActivate: [AuthGuard],
     children: [
       {
         path: 'hearts',
-        loadComponent: () => import('./pages/hearths/hearths.page').then(m => m.HearthsPage),
-        data: { title: 'Foyers'}
+        loadComponent: () =>
+          import('./pages/hearths/hearths.page').then((m) => m.HearthsPage),
+        data: { title: 'Foyers' },
       },
       {
         path: 'tasktab',
-        loadComponent: () => import('./pages/tasks/tasks.page').then(m => m.TasksPage),
-        data: { title: 'Tâches'}
+        loadComponent: () =>
+          import('./pages/tasks/tasks.page').then((m) => m.TasksPage),
+        data: { title: 'Tâches' },
       },
       {
         path: 'account',
-        loadComponent: () => import('./pages/account/account.page').then(m => m.AccountPage),
-        data: { title: 'Compte'}
-      }
-    ]
-  }
+        loadComponent: () =>
+          import('./pages/account/account.page').then((m) => m.AccountPage),
+        data: { title: 'Compte' },
+      },
+    ],
+  },
 
   // Plutôt que les routes ci-dessous, on favorise un lazyloading via le loadcomponent
   // { path: 'forgot-password', component: ForgotPasswordComponent },

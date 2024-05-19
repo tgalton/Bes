@@ -1,4 +1,3 @@
-
 <app-header></app-header>
 <ion-content>
   <div class="contener">
@@ -8,7 +7,8 @@
         <!-- <ion-input type="text" required label="Email" [(ngModel)]="email" name="email"></ion-input> -->
       </ion-item>
       <!-- Si touché mais null ou invalide alors message erreur -->
-      <ion-text *ngIf="this.emailControl?.touched && this.emailControl?.value !== null && !this.emailControl?.valid" color="danger">
+      <ion-text *ngIf="this.emailControl?.touched && this.emailControl?.value !== null && !this.emailControl?.valid"
+        color="danger">
         L'email est obligatoire et doit être valide.
       </ion-text>
       <ion-item lines="full">
