@@ -1,12 +1,12 @@
 ion-content {
-    display: flex;
-    margin: auto;  
-    .contener {
-        width: 340px;
-        margin: auto;  
-        justify-content: center;
-        margin-top: 2em;
-        padding-left: 2px;
-        padding-right: 2px;
-    }
+  display: flex;
+  margin: auto;
+  .contener {
+    max-width: 400px;
+    margin: auto;
+    justify-content: center;
+    margin-top: 2em;
+    padding-left: 2px;
+    padding-right: 2px;
   }
+}

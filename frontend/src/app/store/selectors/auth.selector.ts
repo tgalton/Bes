@@ -1,13 +1,19 @@
+//src/app/store/selectors/auth.selector.ts
 import { createSelector } from '@ngrx/store';
 import { AppState } from 'src/app/app.state';
 import { AuthState } from '../reducers/auth.reducer';
 
 // Sélecteur pour obtenir l'état d'authentification à partir de l'état global de l'application
 // Un sélecteur est une fonction qui extrait une partie spécifique de l'état global.
-export const selectAuthState = (state: AppState) => {
-  console.log('selectAuthState:', state.auth); // Log de l'état d'authentification
-  return state.auth;
-};
+
+// Sélecteur pour obtenir l'état d'authentification
+export const selectAuthState = (appstate: AppState) => appstate.auth;
+
+// Sélecteur pour obtenir l'utilisateur connecté
+export const selectUser = createSelector(
+  selectAuthState,
+  (authstate: AuthState) => authstate.user
+);
 
 // Sélecteur pour vérifier si l'utilisateur est connecté
 // Utilise le sélecteur `selectAuthState` pour obtenir l'état d'authentification,

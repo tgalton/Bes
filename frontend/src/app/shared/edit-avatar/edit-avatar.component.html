@@ -1,0 +1,20 @@
+<!-- edit-avatar/edit-avatar.component.html -->
+
+<ion-content padding="20px">
+  <!-- Afficher la longueur du tableau -->
+  <ion-title>Choisir un nouvel avatar</ion-title>
+  <!-- Afficher seulement si avatars est chargé et non vide -->
+  <ion-list mode="md" *ngIf="avatars.length > 0; else loading">
+    <ng-container class="contener" *ngFor="let avatar of avatars; index as i">
+      <ion-item button (click)="selectAvatar(avatar)">
+        <img class="avatar" [src]="'./../../../' + avatar.path" slot="start">
+      </ion-item>
+    </ng-container>
+  </ion-list>
+  <!-- Template à afficher pendant le chargement des avatars -->
+  <ng-template #loading>
+    <ion-item>
+      <ion-label>Loading avatars...</ion-label>
+    </ion-item>
+  </ng-template>
+</ion-content>

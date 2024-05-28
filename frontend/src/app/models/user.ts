@@ -6,6 +6,7 @@ export class User {
   isActive?: boolean;
   password: string;
   hearths?: string[];
+  avatar?: string;
 
   constructor(
     id: number,
@@ -14,7 +15,8 @@ export class User {
     password: string,
     age?: number,
     isActive?: boolean,
-    hearths?: string[]
+    hearths?: string[],
+    avatar?: string
   ) {
     this.id = id;
     this.username = username;
@@ -23,5 +25,6 @@ export class User {
     this.age = age;
     this.isActive = isActive;
     this.hearths = hearths;
+    this.avatar = avatar;
   }
 }

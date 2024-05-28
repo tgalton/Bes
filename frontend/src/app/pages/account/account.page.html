@@ -1,34 +1,51 @@
 <app-header></app-header>
+<ion-content class="ion-padding">
+  <div class="contener">
+    <h1>Mon profil</h1>
+    <form [formGroup]="accountForm" (ngSubmit)="updateProfile()">
+      <!-- Avatar -->
+      <div class="avatar-section">
+        <div class="avatar-container">
+          <ng-container *ngIf="userAvatar$ | async as userAvatar">
+            <img [src]="getAvatarPath(userAvatar)" alt="avatar" class="avatar">
+          </ng-container>
+          <div (click)="openEditAvatarModal()">
+            <ion-icon name="pencil-outline" style="color:white"></ion-icon>
+          </div>
+        </div>
+      </div>
 
-<ion-content padding>
-  <!-- Display user information -->
-  <ion-item>
-    <!-- <ion-avatar item-start [src]="user?.hearths?.[0]"></ion-avatar> -->
-    <ion-label>
-      <h2>{{ user?.username }}</h2>
-      <p>{{ user?.email }}</p>
-    </ion-label>
-  </ion-item>
+      <!-- Username -->
+      <ion-item>
+        <ion-label position="floating">Nom d'utilisateur</ion-label>
+        <ion-input formControlName="username"></ion-input>
+      </ion-item>
 
-  <!-- Update form -->
-  <form [formGroup]="accountForm" (ngSubmit)="updateProfile()">
-    <ion-item>
-      <ion-label position="floating">Username</ion-label>
-      <input formControlName="username" type="text" [value]="user?.username" />
-    </ion-item>
-    <!-- Disable email input and display current email -->
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <input formControlName="email" type="email" [disabled]="true" [value]="user?.email" />
-    </ion-item>
+      <!-- Email -->
+      <ion-item>
+        <ion-label position="floating">E-mail</ion-label>
+        <ion-input formControlName="email" type="email"></ion-input>
+      </ion-item>
 
-    <!-- Avatar selection -->
-    <ion-item>
-      <ion-label position="floating">Avatar</ion-label>
-      <!-- Add your avatar selection logic here, e.g., a dropdown list or image picker -->
-      <input formControlName="avatar" type="hidden" />
-    </ion-item>
+      <!-- Current Password -->
+      <ion-item>
+        <ion-label position="floating">Mot de passe actuel</ion-label>
+        <ion-input [type]="showCurrentPassword ? 'text' : 'password'" formControlName="currentPassword"></ion-input>
+        <ion-button fill="clear" slot="end" (click)="toggleCurrentPasswordVisibility()">
+          <ion-icon [name]="showCurrentPassword ? 'eye-outline' : 'eye-off-outline' "></ion-icon>
+        </ion-button>
+      </ion-item>
 
-    <button ion-button type="submit" [disabled]="!accountForm.valid">Update</button>
-  </form>
+      <!-- New Password -->
+      <ion-item>
+        <ion-label position="floating">Nouveau mot de passe</ion-label>
+        <ion-input [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword"></ion-input>
+        <ion-button fill="clear" slot="end" (click)="toggleNewPasswordVisibility()">
+          <ion-icon [name]="showNewPassword ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-button expand="full" type="submit" [disabled]="!accountForm.valid">Enregistrer les modifications</ion-button>
+    </form>
+  </div>
 </ion-content>

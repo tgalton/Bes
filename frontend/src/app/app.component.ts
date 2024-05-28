@@ -21,8 +21,6 @@ import { HeaderComponent } from './shared/header/header.component';
     IonApp,
     IonRouterOutlet,
     HeaderComponent,
-    // StoreModule.forRoot(reducers), // Configurez vos reducers ici
-    // EffectsModule.forRoot(effects), // Configurez vos effects ici, si nécessaire
   ],
 })
 export class AppComponent {

@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatMap, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import * as AuthActions from '../actions/auth.actions';
-import { logout } from '../actions/auth.actions'; // Assurez-vous que le chemin est correct
+import { logout } from '../actions/auth.actions';
+import * as UserActions from '../actions/user.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -29,10 +30,14 @@ export class AuthEffects {
         return this.authService
           .authenticateUser(action.email, action.password)
           .pipe(
-            // Si l'authentification réussit, déclenche l'action `loginSuccess`
-            map((user) => {
+            // Si l'authentification réussit, déclenche l'action `loginSuccess` et récupère l'user pour UserStore
+            concatMap((user) => {
               console.log('Effect: loginSuccess', user); // Log de l'utilisateur authentifié
-              return AuthActions.loginSuccess({ user });
+              // Retourne les actions `loginSuccess` et `loadUserSuccess`
+              return [
+                AuthActions.loginSuccess({ user }),
+                UserActions.loadUserSuccess({ user }),
+              ];
             }),
             // Si l'authentification échoue, déclenche l'action `loginFailure`
             catchError((error) => {

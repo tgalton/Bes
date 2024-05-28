@@ -1,15 +1,41 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { Task } from "src/app/models/task";
-import { IonButton, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonRow, IonTitle, IonToolbar } from "@ionic/angular/standalone";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonFab,
+  IonFabButton,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
+import { Task } from 'src/app/models/task';
 
 @Component({
   selector: 'app-task',
   templateUrl: 'task.component.html',
   styleUrls: ['task.component.scss'],
   standalone: true,
-  imports: [IonFab, IonButton, IonRow, IonCol, IonGrid, IonIcon, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [
+    IonFab,
+    IonButton,
+    IonRow,
+    IonCol,
+    IonGrid,
+    IonIcon,
+    IonFabButton,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class TaskComponent implements OnInit {
   taskId!: number;
@@ -51,7 +77,6 @@ export class TaskComponent implements OnInit {
 
   ngOnInit() {
     this.updateTaskPoint();
-    console.log(this.taskName)
   }
 
   openEditTask() {

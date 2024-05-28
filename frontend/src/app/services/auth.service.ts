@@ -7,8 +7,17 @@ import { User } from 'src/app/models/user';
   providedIn: 'root',
 })
 export class AuthService {
-  private users: User[] = [
-    new User(1, 'Tom', 'galtontom@gmail.com', 'mdp', 25, true),
+  public users: User[] = [
+    new User(
+      1,
+      'Tom',
+      'galtontom@gmail.com',
+      'mdp',
+      25,
+      true,
+      undefined,
+      'octopus_3937743'
+    ),
     new User(2, 'Alice', 'alice@example.com', 'mdp', 30, true),
     new User(3, 'Bob', 'bob@example.com', 'mdp', 28, true),
   ];
