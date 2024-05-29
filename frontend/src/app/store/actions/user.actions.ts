@@ -37,11 +37,6 @@ export const updateUserFailure = createAction(
   props<{ error: any }>()
 );
 
-// Enregistrer la sélection de l'avatar dans le store en utilisant une action.
-export interface UpdateUser {
-  avatar: string | null;
-}
-
 // Action pour mettre à jour l'avatar'
 export const updateUserAvatar = createAction(
   '[User] Update Avatar',

@@ -65,6 +65,7 @@ export class LoginPage {
       this.presentToast('Veuillez remplir correctement tous les champs.');
     }
   }
+
   async presentToast(message: string) {
     const toast = await this.toastController.create({
       message: message,

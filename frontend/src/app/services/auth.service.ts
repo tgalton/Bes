@@ -1,5 +1,6 @@
 // auth.service.ts
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
@@ -45,8 +46,21 @@ export class AuthService {
     return of(this.isLoggedIn).pipe(delay(1000)); // Simulates a delay of 1 second
   }
 
-  // The existing API call prototypes are kept in comments for future reference
-  /*
+  static isValidPassword(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const isValid =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.[\]{}()?"!@#%&/,><':;|_~`])[A-Za-z\d\^$*.[\]{}()?"!@#%&/,><':;|_~`]{8,}$/.test(
+          control.value
+        );
+      return isValid
+        ? null
+        : { invalidPassword: 'Password does not meet criteria' };
+    };
+  }
+}
+
+// The existing API call prototypes are kept in comments for future reference
+/*
   authenticateUser(email: string, password: string): Observable<User> {
     return this.http.post<User>('/api/login', { email, password });
   }
@@ -58,4 +72,3 @@ export class AuthService {
   isLogged(): Observable<boolean> {
 
   */
-}
