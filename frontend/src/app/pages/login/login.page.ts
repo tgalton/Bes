@@ -52,6 +52,8 @@ export class LoginPage {
     // Abonnement au sélecteur isLoggedIn pour rediriger si l'utilisateur est déjà connecté
     this.store.select(isLoggedInSelector).subscribe((isLoggedIn) => {
       if (isLoggedIn) {
+        // A mettre ici ou auth.effects ?
+        // TODO: rediriger vers heartlist si l'utilisateur n'a aucun foyer.
         this.router.navigate(['tabs/tasktab']);
       }
     });

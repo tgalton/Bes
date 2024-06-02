@@ -34,7 +34,9 @@ export const routes: Routes = [
       {
         path: 'hearts',
         loadComponent: () =>
-          import('./pages/hearths/hearths.page').then((m) => m.HearthsPage),
+          import('./pages/hearth-list/hearth-list.page').then(
+            (m) => m.HearthListComponent
+          ),
         data: { title: 'Foyers' },
       },
       {
