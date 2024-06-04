@@ -1,6 +1,7 @@
-<!-- TODO: Afficher l'image du foyer : image par défaut / perso -->
-<!-- Afficher le nom -->
+<!-- Affiche le nom -->
 <div>{{hearth.name}}</div>
+<!-- TODO: Afficher l'image du foyer : image par défaut / perso -->
+<img [src]="imagePath$ | async">
 
 <!-- TODO: Afficher les icones des participants-->
 <!-- TODO: Bouton modal pour inviter une personne -->

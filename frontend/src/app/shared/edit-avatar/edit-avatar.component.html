@@ -6,7 +6,7 @@
   <!-- Afficher seulement si avatars est chargé et non vide -->
   <ion-list mode="md" *ngIf="avatars.length > 0; else loading">
     <ng-container class="contener" *ngFor="let avatar of avatars; index as i">
-      <ion-item button (click | onKeyPress)="selectAvatar(avatar)">
+      <ion-item button (click)="selectAvatar(avatar)">
         <img class="avatar" [src]="'./../../../' + avatar.path" slot="start">
       </ion-item>
     </ng-container>

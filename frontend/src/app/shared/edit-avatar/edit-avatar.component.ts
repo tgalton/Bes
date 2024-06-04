@@ -43,10 +43,9 @@ export class EditAvatarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.avatarService.getAvatars().subscribe({
+    this.avatarService.getAllAvatars().subscribe({
       next: (avatars) => {
         this.avatars = avatars;
-        console.log(this.avatars);
         this.cd.detectChanges(); // Force Angular to recognize the update
       },
       error: (error) => {
