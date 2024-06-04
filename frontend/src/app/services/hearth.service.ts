@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { delay, map, tap } from 'rxjs/operators';
 import { Hearth } from '../models/hearth';
 
 @Injectable({
@@ -15,9 +15,14 @@ export class HearthService {
 
   constructor() {}
 
-  getHearthsByUser(): Observable<Hearth[]> {
+  getHearthsByUser(userId: number): Observable<Hearth[]> {
     // Doit récupérer la liste de foyers de l'utilisateur et update le storeUser
-    return of(this.hearths).pipe(delay(1000)); // Simule une requête HTTP avec délai
+    return of(this.hearths).pipe(
+      delay(1000),
+      map((hearths) =>
+        hearths.filter((hearth) => hearth.users.includes(userId))
+      )
+    ); // Simule une requête HTTP avec délai
   }
 
   addHearth(hearth: Hearth): Observable<Hearth> {

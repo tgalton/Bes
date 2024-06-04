@@ -8,6 +8,7 @@ import { catchError, concatMap, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import * as AuthActions from '../actions/auth.actions';
 import { logout } from '../actions/auth.actions';
+import * as HearthActions from '../actions/hearths.actions';
 import * as UserActions from '../actions/user.actions';
 
 @Injectable()
@@ -37,6 +38,7 @@ export class AuthEffects {
               return [
                 AuthActions.loginSuccess({ user }),
                 UserActions.loadUserSuccess({ user }),
+                HearthActions.loadHearths({ userId: user.id }),
               ];
             }),
             // Si l'authentification échoue, déclenche l'action `loginFailure`

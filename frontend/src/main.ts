@@ -18,6 +18,7 @@ import { routes } from './app/app.routes';
 import { AuthEffects } from './app/store/effects/auth.effects';
 import { UserEffects } from './app/store/effects/user.effects';
 import { authReducer } from './app/store/reducers/auth.reducer';
+import { hearthsReducer } from './app/store/reducers/hearths.reducer';
 import { userReducer } from './app/store/reducers/user.reducer';
 import { environment } from './environments/environment';
 
@@ -33,10 +34,11 @@ bootstrapApplication(AppComponent, {
     provideStore({
       user: userReducer,
       auth: authReducer,
+      hearths: hearthsReducer,
     }),
     provideHttpClient(),
     provideClientHydration(),
-    provideEffects([AuthEffects, UserEffects]),
+    provideEffects([AuthEffects, UserEffects, HearthsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
   ],
 });
