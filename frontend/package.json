@@ -5,12 +5,13 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "npm run generate-icon-list && ng serve",
-    "build": "npm run generate-icon-list && ng build",
+    "start": "npm run generate-icon-list-user && npm run generate-image-list-hearth && ng serve",
+    "build": "npm run generate-icon-list-user && npm run generate-image-list-hearth && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "generate-icon-list": "node ./scripts/generate-icon-list.js"
+    "generate-icon-list-user": "node ./scripts/generate-icon-list-user.js",
+    "generate-image-list-hearth": "node ./scripts/generate-image-list-hearth.js"
   },
   "private": true,
   "dependencies": {
