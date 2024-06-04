@@ -1,11 +1,11 @@
 // src/app/shared/edit-avatar/edit-avatar.component.ts
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
-import { Store, select } from '@ngrx/store';
-import { filter } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { AppState } from 'src/app/app.state';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { updateUserAvatar } from 'src/app/store/actions/user.actions';
@@ -23,14 +23,16 @@ import { HeaderComponent } from '../header/header.component';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    HttpClientModule,
     HeaderComponent,
   ],
+  // providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class EditAvatarComponent implements OnInit {
   avatars: any[] = [];
   selectedAvatarId: number | null = null;
-  userId: number | undefined;
+  userId$: Observable<number | undefined> = this.store
+    .select(selectUser)
+    .pipe(map((user) => user?.id));
 
   constructor(
     private avatarService: AvatarService,
@@ -38,16 +40,7 @@ export class EditAvatarComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private modalCtrl: ModalController,
     private toastController: ToastController
-  ) {
-    this.store.pipe(select(selectUser)).subscribe({
-      next: (user) => {
-        this.userId = user?.id;
-      },
-      error: (error) => {
-        console.error('Error fetching user:', error);
-      },
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.avatarService.getAvatars().subscribe({

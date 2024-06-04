@@ -4,12 +4,17 @@ import { HearthsState } from '../reducers/hearths.reducer';
 export const selectHearthsState =
   createFeatureSelector<HearthsState>('hearths');
 
-export const selectAllHearths = createSelector(
+// export const selectAllHearths = createSelector(
+//   selectHearthsState,
+//   (state: HearthsState) => state.hearths
+// );
+
+export const selectIfHearthsLoaded = createSelector(
   selectHearthsState,
-  (state: HearthsState) => state.hearths
+  (state: HearthsState) => state.loaded
 );
 
 export const selectHearthsLoaded = createSelector(
   selectHearthsState,
-  (state: HearthsState) => state.loaded
+  (state: HearthsState) => state.hearths
 );

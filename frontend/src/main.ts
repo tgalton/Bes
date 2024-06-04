@@ -16,6 +16,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { AuthEffects } from './app/store/effects/auth.effects';
+import { HearthEffects } from './app/store/effects/hearths.effects';
 import { UserEffects } from './app/store/effects/user.effects';
 import { authReducer } from './app/store/reducers/auth.reducer';
 import { hearthsReducer } from './app/store/reducers/hearths.reducer';
@@ -38,7 +39,7 @@ bootstrapApplication(AppComponent, {
     }),
     provideHttpClient(),
     provideClientHydration(),
-    provideEffects([AuthEffects, UserEffects, HearthsEffects]),
+    provideEffects([AuthEffects, UserEffects, HearthEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
   ],
 });

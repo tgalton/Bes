@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
@@ -35,20 +35,12 @@ import { HeaderComponent } from '../../shared/header/header.component';
   templateUrl: './hearth-list.page.html',
   styleUrls: ['./hearth-list.page.scss'],
 })
-export class HearthListComponent implements OnInit {
+export class HearthListComponent {
   user$: Observable<User | null>;
-  hearthList: Hearth[] = [];
+  hearthList$: Observable<Hearth[]> = this.store.select(selectHearthsLoaded);
   loading: boolean = true;
 
   constructor(private store: Store<AppState>) {
     this.user$ = this.store.select(selectUser);
-  }
-
-  ngOnInit(): void {
-    this.user$.subscribe((user) => {
-      if (user) {
-        this.store.select(selectHearthsLoaded);
-      }
-    });
   }
 }

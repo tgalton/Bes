@@ -1,7 +1,7 @@
 <app-header></app-header>
 <ion-content [fullscreen]="true">
   <ion-list>
-    <ion-item *ngFor="let heart of hearthList">
+    <ion-item *ngFor="let heart of hearthList$ |async">
       <!-- TODO: Afficher l'image du foyer : image par défaut / perso -->
       <!-- Afficher le nom -->
       <div>{{heart.name}}</div>
