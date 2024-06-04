@@ -8,9 +8,9 @@ import { Hearth } from '../models/hearth';
 })
 export class HearthService {
   private hearths: Hearth[] = [
-    new Hearth(1, 'Maison', [1, 2], 'maison.jpg', 1),
-    new Hearth(2, 'Coloc', [1, 3], 'coloc.jpg', 3),
-    new Hearth(3, 'Maison Vacance', [1, 3], 'vacance.jpg', 3),
+    new Hearth(1, 'Maison', [1, 2], 'club-house', 1),
+    new Hearth(2, 'Coloc', [1, 3], 'batiment-de-la-ville', 3),
+    new Hearth(3, 'Maison Vacance', [1, 3], 'house-plants', 3),
   ];
 
   constructor() {}
