@@ -7,7 +7,7 @@
       <div class="avatar-section">
         <div class="avatar-container">
           <ng-container *ngIf="userAvatar$ | async as userAvatar">
-            <img [src]="getAvatarPath(userAvatar)" alt="avatar" class="avatar">
+            <img [src]="avatarService.getAvatarPathFromName(userAvatar) | async" alt="avatar" class="avatar">
           </ng-container>
           <div (click)="openEditAvatarModal()">
             <ion-icon name="pencil-outline" style="color:white"></ion-icon>

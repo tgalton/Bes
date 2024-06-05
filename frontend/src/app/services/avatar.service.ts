@@ -49,12 +49,12 @@ export class AvatarService {
     return this.getAllAvatars().pipe(
       map((avatars) => {
         const avatar = avatars.find((a) => a.name === name);
-        if (!avatar) {
-          throw new Error(`No avatar with the name '${name}' found.`);
-        }
-        return avatar.path;
+        return avatar ? avatar.path : 'path_to_default_avatar';
       }),
-      catchError((err) => throwError(() => err))
+      catchError((err) => {
+        console.error(`Error while fetching avatar path: ${err}`);
+        return of('path_to_error_avatar');
+      })
     );
   }
 

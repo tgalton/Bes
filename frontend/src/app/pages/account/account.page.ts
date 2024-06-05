@@ -31,6 +31,7 @@ import {
 import { AppState } from 'src/app/app.state';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
+import { AvatarService } from 'src/app/services/avatar.service';
 import { EditAvatarComponent } from 'src/app/shared/edit-avatar/edit-avatar.component';
 import * as AuthActions from 'src/app/store/actions/auth.actions';
 import * as UserActions from 'src/app/store/actions/user.actions';
@@ -80,7 +81,8 @@ export class AccountPage implements OnInit {
     private store: Store<AppState>,
     private modalController: ModalController,
     private actions$: Actions,
-    private toastController: ToastController
+    private toastController: ToastController,
+    protected avatarService: AvatarService
   ) {
     addIcons({ eyeOffOutline, eyeOutline, pencilOutline });
     // Validators
