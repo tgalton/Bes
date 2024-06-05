@@ -85,4 +85,16 @@ export class UserService {
       throw new Error('Utilisateur non trouvé');
     }
   }
+
+  getUsersAvatarsAndNames(userIds: number[]): Observable<string[]> {
+    // Extraction des utilisateurs correspondant aux IDs fournis
+    const usersInfo = this.users
+      .filter((user) => userIds.includes(user.id))
+      .map((user) => `${user.username}: ${user.avatar || "Pas d'avatar"}`);
+
+    // Retourne un observable des informations, avec un délai pour simuler la réponse de requête
+    return of(usersInfo).pipe(
+      delay(1000) // Simule un délai d'attente de 1 seconde
+    );
+  }
 }
