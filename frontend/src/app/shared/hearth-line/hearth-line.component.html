@@ -3,5 +3,6 @@
 <!-- TODO: Afficher l'image du foyer : image par défaut / perso -->
 <img class="hearthImage" [src]="imagePath$ | async">
 <!-- TODO: Afficher les icones des participants-->
+<img *ngFor="let hearthUser of hearth.hearthUsers" [src]="hearthUser.avatar" alt="{{ hearthUser.name }}">
 <!-- TODO: Bouton modal pour inviter une personne -->
 <!-- TODO: Bouton modal pour paramètres du foyer -> Modif image | coef utilisateur | supprimer utilisateur | supprimer foyer-->

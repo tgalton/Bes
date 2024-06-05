@@ -1,26 +1,52 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
-import { Hearth } from '../models/hearth';
+import { Hearth, HearthUser } from '../models/hearth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HearthService {
   private hearths: Hearth[] = [
-    new Hearth(1, 'Maison', [1, 2], 'club-house', 1),
-    new Hearth(2, 'Coloc', [1, 3], 'batiment-de-la-ville', 3),
-    new Hearth(3, 'Maison Vacance', [1, 3], 'house-plants', 3),
+    new Hearth(
+      1,
+      'Maison',
+      [new HearthUser(1, undefined, undefined)],
+      'club-house',
+      1
+    ),
+    new Hearth(
+      2,
+      'Coloc',
+      [
+        new HearthUser(1, undefined, undefined),
+        new HearthUser(3, undefined, undefined),
+      ],
+      'batiment-de-la-ville',
+      3
+    ),
+    new Hearth(
+      3,
+      'Maison Vacance',
+      [
+        new HearthUser(1, undefined, undefined),
+        new HearthUser(2, undefined, undefined),
+      ],
+      'house-plants',
+      3
+    ),
   ];
 
   constructor() {}
 
   getHearthsByUser(userId: number): Observable<Hearth[]> {
-    // Doit récupérer la liste de foyers de l'utilisateur et update le storeUser
+    // Doit récupérer la liste de foyers de l'utilisateur
     return of(this.hearths).pipe(
       delay(1000),
       map((hearths) =>
-        hearths.filter((hearth) => hearth.users.includes(userId))
+        hearths.filter((hearth) =>
+          hearth.hearthUsers.some((user) => user.id === userId)
+        )
       )
     ); // Simule une requête HTTP avec délai
   }

@@ -86,15 +86,18 @@ export class UserService {
     }
   }
 
-  getUsersAvatarsAndNames(userIds: number[]): Observable<string[]> {
-    // Extraction des utilisateurs correspondant aux IDs fournis
+  // WARNING: Cette fonctionnalité devra être sécurisée et limitée à des utilisateurs avec lesquels ont a des foyers en commun.
+  getUsersAvatarsAndNames(
+    userIds: number[]
+  ): Observable<{ id: number; name: string; avatar: string }[]> {
     const usersInfo = this.users
       .filter((user) => userIds.includes(user.id))
-      .map((user) => `${user.username}: ${user.avatar || "Pas d'avatar"}`);
+      .map((user) => ({
+        id: user.id,
+        name: user.username,
+        avatar: user.avatar || "Pas d'avatar",
+      }));
 
-    // Retourne un observable des informations, avec un délai pour simuler la réponse de requête
-    return of(usersInfo).pipe(
-      delay(1000) // Simule un délai d'attente de 1 seconde
-    );
+    return of(usersInfo).pipe(delay(1000));
   }
 }
