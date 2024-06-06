@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline } from 'ionicons/icons';
+import { addOutline, settingsOutline } from 'ionicons/icons';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { Hearth } from 'src/app/models/hearth';
 import { AvatarService } from 'src/app/services/avatar.service';
@@ -19,7 +19,7 @@ export class HearthLineComponent implements OnInit {
   imagePath$!: Observable<string>;
 
   constructor(protected avatarService: AvatarService) {
-    addIcons({ addOutline });
+    addIcons({ addOutline, settingsOutline });
   }
 
   ngOnInit() {
