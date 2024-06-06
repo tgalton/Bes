@@ -1,8 +1,19 @@
-<!-- Affiche le nom -->
-<div>{{hearth.name}}</div>
-<!-- TODO: Afficher l'image du foyer : image par défaut / perso -->
-<img class="hearthImage" [src]="imagePath$ | async">
-<!-- TODO: Afficher les icones des participants-->
-<img *ngFor="let hearthUser of hearth.hearthUsers" [src]="hearthUser.avatar" alt="{{ hearthUser.name }}">
-<!-- TODO: Bouton modal pour inviter une personne -->
-<!-- TODO: Bouton modal pour paramètres du foyer -> Modif image | coef utilisateur | supprimer utilisateur | supprimer foyer-->
+<div class="container">
+  <!-- TODO: Afficher l'image du foyer avec le nom : image par défaut / perso -->
+  <div class="hearthImage">
+    <img [src]="imagePath$ | async">
+    <span class="hearth-name">{{hearth.name}}</span>
+  </div>
+  <!-- Affiche les icons des participants-->
+  <div class="hearthAvatarImage" *ngFor="let hearthUser of hearth.hearthUsers">
+    <img [src]="avatarService.getAvatarPathFromName(hearthUser.avatar) | async" alt="{{ hearthUser.name }}">
+    <span class="user-name">{{ hearthUser.name }}</span>
+  </div>
+  <div class="hearthAvatarImage">
+    <ion-button fill="clear">
+      <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <!-- TODO: Bouton modal pour inviter une personne -->
+  <!-- TODO: Bouton modal pour paramètres du foyer -> Modif image | coef utilisateur | supprimer utilisateur | supprimer foyer-->
+</div>

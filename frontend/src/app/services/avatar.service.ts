@@ -45,17 +45,22 @@ export class AvatarService {
   }
 
   // Méthode pour récupérer le chemin d'un avatar par son nom
-  getAvatarPathFromName(name: string): Observable<string> {
-    return this.getAllAvatars().pipe(
-      map((avatars) => {
-        const avatar = avatars.find((a) => a.name === name);
-        return avatar ? avatar.path : 'path_to_default_avatar';
-      }),
-      catchError((err) => {
-        console.error(`Error while fetching avatar path: ${err}`);
-        return of('path_to_error_avatar');
-      })
-    );
+  getAvatarPathFromName(name: string | undefined): Observable<string> {
+    if (name === undefined) {
+      // Retourne l'URL de l'image par défaut si le nom n'est pas défini
+      return of('path/to/default/avatar.jpg');
+    } else {
+      return this.getAllAvatars().pipe(
+        map((avatars) => {
+          const avatar = avatars.find((a) => a.name === name);
+          return avatar ? avatar.path : 'path/to/default/avatar.jpg';
+        }),
+        catchError((err) => {
+          console.error('Error while fetching avatar path:', err);
+          return of('path/to/error/avatar.jpg');
+        })
+      );
+    }
   }
 
   getAllHearthImage(): Observable<Avatar[]> {

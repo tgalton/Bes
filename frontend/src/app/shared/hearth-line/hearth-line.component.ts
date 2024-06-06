@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { IonButton, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { addOutline } from 'ionicons/icons';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { Hearth } from 'src/app/models/hearth';
 import { AvatarService } from 'src/app/services/avatar.service';
@@ -9,13 +12,15 @@ import { AvatarService } from 'src/app/services/avatar.service';
   templateUrl: './hearth-line.component.html',
   styleUrls: ['./hearth-line.component.scss'],
   standalone: true,
-  imports: [CommonModule],
+  imports: [IonButton, IonIcon, CommonModule],
 })
 export class HearthLineComponent implements OnInit {
   @Input() hearth!: Hearth;
   imagePath$!: Observable<string>;
 
-  constructor(private avatarService: AvatarService) {}
+  constructor(protected avatarService: AvatarService) {
+    addIcons({ addOutline });
+  }
 
   ngOnInit() {
     this.avatarService.getAllHearthImage().subscribe(() => {

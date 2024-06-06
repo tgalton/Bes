@@ -105,12 +105,12 @@ export class AccountPage implements OnInit {
   }
 
   ngOnInit() {
-    // Récupération de la liste d'icones d'avatars
-    this.http
-      .get<Icon[]>('./../../assets/icons.json')
-      .subscribe((data: Icon[]) => {
-        this.avatarList = data;
-      });
+    // // Récupération de la liste d'icones d'avatars
+    // this.http
+    //   .get<Icon[]>('./../../assets/icons.json')
+    //   .subscribe((data: Icon[]) => {
+    //     this.avatarList = data;
+    //   });
 
     this.user$.subscribe((user) => {
       if (user) {
@@ -234,12 +234,6 @@ export class AccountPage implements OnInit {
   // Méthode pour basculer l'état de visibilité du nouveau mot de passe
   toggleNewPasswordVisibility() {
     this.showNewPassword = !this.showNewPassword;
-  }
-
-  // Méthode pour obtenir le chemin de l'avatar
-  getAvatarPath(avatarName: string | undefined): string {
-    const avatar = this.avatarList.find((icon) => icon.name === avatarName);
-    return avatar ? avatar.path : '';
   }
 
   async presentToast(message: string) {

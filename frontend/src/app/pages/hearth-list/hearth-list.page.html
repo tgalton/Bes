@@ -1,11 +1,13 @@
 <app-header></app-header>
 <ion-content [fullscreen]="true">
-  <ion-list>
-    <ng-container *ngFor="let hearth of hearthList$ | async">
-      <ion-item>
-        <app-hearth-line [hearth]="hearth"></app-hearth-line>
-      </ion-item>
-    </ng-container>
-  </ion-list>
-  <!-- TODO: Bouton modal création nouveau foyer -->
+  <div class="contener">
+    <ion-list>
+      <ng-container *ngFor="let hearth of hearthList$ | async">
+        <ion-item>
+          <app-hearth-line [hearth]="hearth"></app-hearth-line>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+    <!-- TODO: Bouton modal création nouveau foyer -->
+  </div>
 </ion-content>

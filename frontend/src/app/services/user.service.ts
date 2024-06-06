@@ -23,8 +23,26 @@ export class UserService {
       undefined,
       'octopus_3937743'
     ),
-    new User(2, 'Alice', 'alice@example.com', 'mdp', 30, true),
-    new User(3, 'Bob', 'bob@example.com', 'mdp', 28, true),
+    new User(
+      2,
+      'Alice',
+      'alice@example.com',
+      'mdp',
+      30,
+      true,
+      undefined,
+      'owl_2179014'
+    ),
+    new User(
+      3,
+      'Bob',
+      'bob@example.com',
+      'mdp',
+      28,
+      true,
+      undefined,
+      'turtle_2622036'
+    ),
   ];
 
   currentUserId: number | undefined;
