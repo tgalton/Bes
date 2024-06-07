@@ -8,5 +8,10 @@ ion-content {
     margin-top: 2em;
     padding-left: 2px;
     padding-right: 2px;
+
+    ion-item {
+      margin-top: 5px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.27);
+    }
   }
 }
