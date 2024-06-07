@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'ionic.bes',
+  appId: 'com.bes.app',
   appName: 'bes',
   webDir: 'www'
 };
