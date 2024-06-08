@@ -2,14 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonList,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { Store } from '@ngrx/store';
+import { addIcons } from 'ionicons';
+
+import { homeOutline } from 'ionicons/icons';
 import { Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.state';
 import { Hearth } from 'src/app/models/hearth';
@@ -20,6 +25,8 @@ import { selectHearthsLoaded } from 'src/app/store/selectors/hearths.selector';
 @Component({
   standalone: true,
   imports: [
+    IonButton,
+    IonIcon,
     IonItem,
     IonList,
     IonContent,
@@ -42,6 +49,7 @@ export class HearthListComponent implements OnInit, OnDestroy {
   loading: boolean = true;
 
   constructor(private store: Store<AppState>) {
+    addIcons({ homeOutline });
     // this.user$ = this.store.select(selectUser);
   }
   ngOnInit(): void {

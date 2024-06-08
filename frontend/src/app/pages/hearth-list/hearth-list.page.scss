@@ -1,7 +1,9 @@
 ion-content {
   display: flex;
+  text-align: center;
   margin: auto;
   .contener {
+    display: flex;
     max-width: 400px;
     margin: auto;
     justify-content: center;
@@ -10,8 +12,28 @@ ion-content {
     padding-right: 2px;
 
     ion-item {
-      margin-top: 5px;
+      justify-content: center;
+      height: 100px;
       border-bottom: 2px solid rgba(255, 255, 255, 0.27);
+      display: flex;
+      text-align: center;
+      align-items: center;
+      margin: auto;
     }
   }
+}
+
+ion-button {
+  display: flex; // Permet la gestion du flexbox pour le bouton
+  justify-content: center; // Centre le contenu à l'intérieur du bouton
+  align-items: center;
+  width: 100%; // Ajuste la largeur pour prendre toute la largeur de l'item
+  margin: 1em;
+  span {
+    color: white;
+  }
+}
+ion-icon {
+  margin: 5px;
+  color: white;
 }
