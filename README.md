@@ -17,4 +17,9 @@ The application backend is coded in [Django](https://www.djangoproject.com/) in 
 
 ### Setup Bes backend
 The application uses [Python 3.9](https://www.python.org/downloads/release/python-390/).
-To manage the python environment and the dependencies, we use [Poetry](https://python-poetry.org/). To install all dependencies, run `poetry install`. Then to run the project, run `poetry run python manage.py runserver`.
+To manage the python environment and the dependencies, we use [Poetry](https://python-poetry.org/). 
+To install all dependencies, run `poetry install`. 
+Then to run the project, run `poetry run python manage.py runserver`.
+
+If the database does not exist, run `poetry run python manage.py migrate`.
+If you want to create a super user in the database, run `poetry run python manage.py createsuperuser`.
