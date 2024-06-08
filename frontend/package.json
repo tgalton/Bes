@@ -6,7 +6,11 @@
   "scripts": {
     "ng": "ng",
     "start": "npm run generate-icon-list-user && npm run generate-image-list-hearth && ng serve",
-    "build": "npm run generate-icon-list-user && npm run generate-image-list-hearth && ng build",
+    "build": "ng build --configuration production",
+    "copy": "npx cap copy",
+    "android": "npx cap open android",
+    "build-and-copy": "ng build --configuration production && npx cap copy",
+    "deploy-android": "ng build --configuration production && npx cap copy && npx cap open android",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
