@@ -1,6 +1,11 @@
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   IonButton,
@@ -37,8 +42,12 @@ import { HeaderComponent } from '../../shared/header/header.component';
 })
 export class LoginPage {
   loginForm: FormGroup = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl(''),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(8),
+      this.passwordStrengthValidator,
+    ]),
   });
 
   emailControl = this.loginForm.get('email');
@@ -57,6 +66,23 @@ export class LoginPage {
         this.router.navigate(['tabs/tasktab']);
       }
     });
+  }
+
+  passwordStrengthValidator(
+    control: FormControl
+  ): { [key: string]: boolean } | null {
+    const value = control.value;
+    if (!value) {
+      return null;
+    }
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasLowerCase = /[a-z]/.test(value);
+    const hasNumeric = /[0-9]/.test(value);
+    const hasSpecial = /[!@#\$%\^\&*\)\(+=._-]/.test(value);
+    if (hasUpperCase && hasLowerCase && hasNumeric && hasSpecial) {
+      return null;
+    }
+    return { passwordStrength: true };
   }
 
   login() {

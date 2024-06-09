@@ -55,16 +55,18 @@ export class UserEffects {
       ofType(UserActions.updateUserAvatar),
       switchMap((action) => {
         console.log('1. Effect: Start Update Avatar', action);
-        return this.userService.updateUserAvatar(action.avatarName).pipe(
-          map((user) => {
-            console.log('2. Effect: Update Avatar Success', user);
-            return UserActions.updateUserAvatarSuccess({ user });
-          }),
-          catchError((error) => {
-            console.log('3. Effect: Update Avatar Failure', error);
-            return of(UserActions.updateUserAvatarFailure({ error }));
-          })
-        );
+        return this.userService
+          .updateUserAvatar(action.userId, action.avatarName)
+          .pipe(
+            map((user) => {
+              console.log('2. Effect: Update Avatar Success', user);
+              return UserActions.updateUserAvatarSuccess({ user });
+            }),
+            catchError((error) => {
+              console.log('3. Effect: Update Avatar Failure', error);
+              return of(UserActions.updateUserAvatarFailure({ error }));
+            })
+          );
       })
     );
   });

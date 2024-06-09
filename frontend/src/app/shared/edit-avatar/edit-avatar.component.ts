@@ -1,10 +1,10 @@
 // src/app/shared/edit-avatar/edit-avatar.component.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { AppState } from 'src/app/app.state';
 import { AvatarService } from 'src/app/services/avatar.service';
@@ -27,12 +27,13 @@ import { HeaderComponent } from '../header/header.component';
   ],
   // providers: [provideHttpClient(withInterceptorsFromDi())],
 })
-export class EditAvatarComponent implements OnInit {
+export class EditAvatarComponent implements OnInit, OnDestroy {
   avatars: any[] = [];
   selectedAvatarId: number | null = null;
   userId$: Observable<number | undefined> = this.store
     .select(selectUser)
     .pipe(map((user) => user?.id));
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private avatarService: AvatarService,
@@ -41,6 +42,9 @@ export class EditAvatarComponent implements OnInit {
     private modalCtrl: ModalController,
     private toastController: ToastController
   ) {}
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.avatarService.getAllAvatars().subscribe({
@@ -62,11 +66,17 @@ export class EditAvatarComponent implements OnInit {
   }
 
   selectAvatar(avatar: any) {
-    this.selectedAvatarId = avatar.id;
-    this.store.dispatch(updateUserAvatar({ avatarName: avatar.name }));
-    // Ferme la modale après la sélection
-    this.modalCtrl.dismiss();
-    this.cd.detectChanges();
+    // Souscrire au userId$
+    this.subscription.add(
+      this.userId$.subscribe((userId) => {
+        this.selectedAvatarId = avatar.id;
+        this.store.dispatch(
+          updateUserAvatar({ userId: userId, avatarName: avatar.name })
+        );
+        this.modalCtrl.dismiss();
+        this.cd.detectChanges();
+      })
+    );
   }
 
   async presentToast(message: string) {

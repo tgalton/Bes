@@ -40,7 +40,7 @@ export const updateUserFailure = createAction(
 // Action pour mettre à jour l'avatar'
 export const updateUserAvatar = createAction(
   '[User] Update Avatar',
-  props<{ avatarName: string }>()
+  props<{ userId: number | undefined; avatarName: string }>()
 );
 
 // Action déclenchée en cas de succès de la mise à jour de l'avatar

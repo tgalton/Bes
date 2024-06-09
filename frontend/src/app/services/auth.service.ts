@@ -1,49 +1,47 @@
 // auth.service.ts
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { User } from 'src/app/models/user';
+import { tap } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  public users: User[] = [
-    new User(
-      1,
-      'Tom',
-      'galtontom@gmail.com',
-      'mdp',
-      25,
-      true,
-      undefined,
-      'octopus_3937743'
-    ),
-    new User(2, 'Alice', 'alice@example.com', 'mdp', 30, true),
-    new User(3, 'Bob', 'bob@example.com', 'mdp', 28, true),
-  ];
-  private isLoggedIn = false;
+  private apiUrl = 'http://localhost:8000/account';
+  constructor(private http: HttpClient) {}
 
-  constructor() {}
-  authenticateUser(email: string, password: string): Observable<User> {
-    const user = this.users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (user) {
-      this.isLoggedIn = true;
-      return of(user).pipe(delay(1000)); // Simulates a delay of 1 second
-    } else {
-      throw new Error('Authentication failed');
-    }
+  authenticateUser(email: string, password: string): Observable<any> {
+    return this.http
+      .post<{ access: string; refresh: string }>(`${this.apiUrl}/login/`, {
+        email: email,
+        password: password,
+      })
+      .pipe(
+        tap((response) => {
+          if (response.access) {
+            localStorage.setItem('auth_token', response.access);
+            localStorage.setItem('refresh_token', response.refresh);
+          } else {
+            throw new Error('Authentication failed');
+          }
+        })
+      );
   }
 
-  logout(): Observable<any> {
-    this.isLoggedIn = false;
-    return of({}).pipe(delay(1000)); // Simulates a delay of 1 second
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
+  }
+
+  logout(): void {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
   }
 
   isLogged(): Observable<boolean> {
-    return of(this.isLoggedIn).pipe(delay(1000)); // Simulates a delay of 1 second
+    const token = localStorage.getItem('auth_token');
+    return of(!!token); // retourne true si le token est présent, sinon false
   }
 
   static isValidPassword(): ValidatorFn {

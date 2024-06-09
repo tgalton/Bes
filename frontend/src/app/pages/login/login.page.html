@@ -4,16 +4,25 @@
     <form (ngSubmit)="login()" [formGroup]="loginForm">
       <ion-item lines="full">
         <ion-input type="text" required formControlName="email" name="email" label="Email"></ion-input>
-        <!-- <ion-input type="text" required label="Email" [(ngModel)]="email" name="email"></ion-input> -->
       </ion-item>
-      <!-- Si touché mais null ou invalide alors message erreur -->
-      <ion-text *ngIf="this.emailControl?.touched && this.emailControl?.value !== null && !this.emailControl?.valid"
-        color="danger">
-        L'email est obligatoire et doit être valide.
+      <ion-text *ngIf="emailControl?.errors?.['required'] && emailControl?.touched" color="danger">
+        L'email est obligatoire.
+      </ion-text>
+      <ion-text *ngIf="emailControl?.errors?.['email'] && emailControl?.touched" color="danger">
+        L'email doit être valide.
       </ion-text>
       <ion-item lines="full">
         <ion-input type="password" required label="Mot-de-passe" formControlName="password" name="password"></ion-input>
       </ion-item>
+      <ion-text *ngIf="passwordControl?.errors?.['required'] && passwordControl?.touched" color="danger">
+        Le mot de passe est obligatoire.
+      </ion-text>
+      <ion-text *ngIf="passwordControl?.errors?.['minLength'] && passwordControl?.touched" color="danger">
+        Le mot de passe doit contenir au moins 8 caractères.
+      </ion-text>
+      <ion-text *ngIf="passwordControl?.errors?.['passwordStrength'] && passwordControl?.touched" color="danger">
+        Le mot de passe doit contenir des lettres (maj + min), des chiffres et des caractères spéciaux.
+      </ion-text>
       <ion-row>
         <ion-col>
           <ion-button type="submit" color="danger" expand="block">Connexion</ion-button>

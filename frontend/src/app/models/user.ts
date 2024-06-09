@@ -1,4 +1,5 @@
 export class User {
+  // src/app/models/user.ts
   id: number;
   username: string;
   email: string;
