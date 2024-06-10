@@ -1,15 +1,14 @@
 from rest_framework import viewsets, status
 from .models import HouseScore, UserProfile
-from .serializers import HouseScoreSerializer, UserSerializer, UserProfileSerializer
-from django.contrib.auth.models import User
+from .serializers import CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework import serializers
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 
@@ -56,24 +55,6 @@ class UserCreateView(APIView):
             return Response({'id': user.id, 'username': user.username, 'email': user.email, 'refresh': str(refresh), 'access': str(refresh.access_token)}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username_field = User.EMAIL_FIELD
-
-    def validate(self, attrs):
-        email = attrs.get("email", "")
-        password = attrs.get("password", "")
-        
-        user = User.objects.filter(email=email).first()
-        if user and user.check_password(password):
-            refresh = RefreshToken.for_user(user)
-            return {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-                "user_id": user.id,
-            }
-        else:
-            raise serializers.ValidationError("Invalid email or password")
-
+@method_decorator(csrf_exempt, name='dispatch')
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

@@ -2,6 +2,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import HouseScore, UserProfile
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # Serializer pour le modèle HouseScore
@@ -31,3 +33,23 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = User.EMAIL_FIELD
+
+    def validate(self, attrs):
+        email = attrs.get("email", "")
+        password = attrs.get("password", "")
+
+        print(f"Received email: {email}, password: {password}")  # Cette ligne pour déboguer
+
+        user = User.objects.filter(email=email).first()
+        if user and user.check_password(password):
+            refresh = RefreshToken.for_user(user)
+            return {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "user_id": user.id,
+            }
+        else:
+            raise serializers.ValidationError("Invalid email or password")
