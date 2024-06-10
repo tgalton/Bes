@@ -6,6 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
+
 # Serializer pour le modèle HouseScore
 class HouseScoreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,7 +17,7 @@ class HouseScoreSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['id', 'user', 'avatar']
+        fields = ['id', 'username', 'email', 'avatar', 'hearths']
 
 # Sérialiseur pour la création d'utilisateur
 class UserSerializer(serializers.ModelSerializer):
@@ -33,7 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
-    
+
+#Serialiseur pour la connexion (token)    
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = User.EMAIL_FIELD
 
@@ -53,3 +55,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             }
         else:
             raise serializers.ValidationError("Invalid email or password")
+
+

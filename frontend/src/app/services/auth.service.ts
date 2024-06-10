@@ -1,9 +1,9 @@
 // auth.service.ts
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -15,19 +15,21 @@ export class AuthService {
   authenticateUser(email: string, password: string): Observable<any> {
     return this.http
       .post<{ access: string; refresh: string }>(`${this.apiUrl}/login/`, {
-        email: email,
-        password: password,
+        email,
+        password,
       })
       .pipe(
-        tap((response) => {
-          if (response.access) {
-            localStorage.setItem('auth_token', response.access);
-            localStorage.setItem('refresh_token', response.refresh);
-          } else {
-            throw new Error('Authentication failed');
-          }
-        })
+        tap((resp) => {
+          localStorage.setItem('auth_token', resp.access);
+          localStorage.setItem('refresh_token', resp.refresh);
+        }),
+        catchError(this.handleError)
       );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    // Client or Network Error
+    return throwError(() => error.error || 'Server error');
   }
 
   getToken(): string | null {
