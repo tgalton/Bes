@@ -17,7 +17,16 @@ class HouseScoreSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['id', 'username', 'email', 'avatar', 'hearths']
+        fields = '__all__'
+        read_only_fields = ('user',)  # Assure that user is not updated via API directly
+
+    def create(self, validated_data):
+        # Vous pouvez ajouter des logiques personnalisées ici
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Logique de mise à jour personnalisée
+        return super().update(instance, validated_data)
 
 # Sérialiseur pour la création d'utilisateur
 class UserSerializer(serializers.ModelSerializer):

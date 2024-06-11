@@ -1,3 +1,4 @@
+from venv import logger
 from rest_framework import viewsets, status
 from .models import HouseScore, UserProfile
 from .serializers import CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
@@ -7,39 +8,59 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
+from django.http import Http404, JsonResponse
+from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth.decorators import login_required
+from rest_framework import generics
+from django.core.exceptions import MultipleObjectsReturned
 
 
-
+# Vue pour le jeton CSRF
+@api_view(['GET'])  # Définir que la vue accepte uniquement les requêtes GET
+@permission_classes([IsAuthenticated])  # Exiger que l'utilisateur soit authentifié
+def csrf(request):
+    """
+    Vue pour retourner le jeton CSRF. L'utilisateur doit être authentifié pour y accéder.
+    """
+    return JsonResponse({'csrfToken': get_token(request)})
 
 # VueSet pour gérer les UserProfiles
-class UserProfileViewSet(viewsets.ModelViewSet):
+from django.contrib.auth.decorators import login_required
+from rest_framework import generics
+
+class UserProfileCreateView(generics.CreateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# @ensure_csrf_cookie
+class UserProfileUpdateView(generics.UpdateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=True, methods=['patch'])
-    def update_avatar(self, request, pk=None):
-        profile = self.get_object()
-        avatar = request.data.get('avatar')
-        if avatar:
-            profile.avatar = avatar
-            profile.save()
-            return Response({'status': 'avatar updated'})
-        else:
-            return Response({'error': 'No avatar provided'}, status=status.HTTP_400_BAD_REQUEST)
+    def get_object(self):
+        try:
+            return self.request.user.profile
+        except UserProfile.DoesNotExist:
+            raise Http404("Aucun profil associé à cet utilisateur n'a été trouvé.")
+        except MultipleObjectsReturned:
+            # Log cette erreur pour une intervention
+            logger.error(f"Multiple profiles found for user {self.request.user.id}!")
+            raise Http404("Plusieurs profils trouvés pour un utilisateur unique. Contactez l'assistance.")
 
-    @action(detail=False, methods=['post'])
-    def get_avatars(self, request):
-        user_ids = request.data.get('user_ids', [])
-        profiles = UserProfile.objects.filter(user_id__in=user_ids)
-        response_data = [{'id': profile.user_id, 'name': profile.user.username, 'avatar': profile.avatar if profile.avatar else 'Pas d\'avatar'} for profile in profiles]
-        return Response(response_data)
 
 # VueSet pour gérer les HouseScores
 class HouseScoreViewSet(viewsets.ModelViewSet):
@@ -51,6 +72,7 @@ class HouseScoreViewSet(viewsets.ModelViewSet):
 class UserCreateView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @csrf_exempt     
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -59,7 +81,6 @@ class UserCreateView(APIView):
             return Response({'id': user.id, 'username': user.username, 'email': user.email, 'refresh': str(refresh), 'access': str(refresh.access_token)}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
@@ -70,6 +91,8 @@ class CurrentUserView(generics.RetrieveAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    # @ensure_csrf_cookie
+    @csrf_exempt     
     def get_object(self):
         """
         Override the typical get_object method to return the User object

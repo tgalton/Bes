@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("housework/", include("housework.urls")),
     path("account/", include("account.urls")),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # https://docs.djangoproject.com/en/4.2/howto/static-files/#serving-uploaded-files-in-development
 # TODO : à revoir pour la prod : https://docs.djangoproject.com/en/4.2/howto/static-files/deployment/
