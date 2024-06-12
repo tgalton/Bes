@@ -1,9 +1,17 @@
 from rest_framework import serializers
 from .models import House, HouseworkPossibleTask, HouseworkMadeTask, History
 from django.utils import timezone
+from django.contrib.auth.models import User
 
+class UserHouseDetailSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField(source='profile.avatar')
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'avatar']
 
 class HouseSerializer(serializers.ModelSerializer):
+    users = UserHouseDetailSerializer(many=True)
     class Meta:
         model = House
         fields = ['id', 'name', 'users']

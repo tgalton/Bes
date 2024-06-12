@@ -10,6 +10,7 @@ from .serializers import HouseSerializer, HouseworkMadeTaskDateRangeSerializer, 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import views
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -20,6 +21,7 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
+
 
 
 
@@ -209,3 +211,53 @@ class HouseworkMadeTaskDateRangeView(views.APIView):
         serializer = HouseworkMadeTaskDateRangeSerializer(tasks, many=True)
         return Response(serializer.data)
     
+# Permet d'enrigistrer une liste de tâches réalisées à son nom.
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_multiple_made_tasks(request):
+    # Extrait les données de la requête
+    task_list = request.data
+
+    created_tasks = []
+    errors = []
+
+    for task in task_list:
+        possible_task_id = task.get('possible_task_id')
+        count = task.get('count')
+
+        try:
+            possible_task = HouseworkPossibleTask.objects.get(id=possible_task_id)
+            
+            # Vérifie que l'utilisateur est bien membre de la maison
+            if not possible_task.house.users.filter(id=request.user.id).exists():
+                errors.append({"possible_task_id": possible_task_id, "error": "User is not a member of the house"})
+                continue
+
+            # Crée les tâches réalisées
+            for _ in range(count):
+                made_task = HouseworkMadeTask.objects.create(
+                    name=possible_task.name,
+                    date=timezone.now(),
+                    duration=possible_task.duration,
+                    difficulty=possible_task.difficulty,
+                    user=request.user,
+                    house=possible_task.house,
+                    score=0  # à définir selon la logique voulue
+                )
+                created_tasks.append(made_task.id)
+
+        except HouseworkPossibleTask.DoesNotExist:
+            errors.append({"possible_task_id": possible_task_id, "error": "Possible task not found"})
+
+    if errors:
+        return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({"created_tasks_ids": created_tasks}, status=status.HTTP_201_CREATED)
+
+@permission_classes([IsAuthenticated])
+class HouseViewSet(viewsets.ReadOnlyModelViewSet):
+    """ 
+    Affiche les maisons avec les détails des utilisateurs incluant l'avatar et le nom d'utilisateur.
+    """
+    queryset = House.objects.all()
+    serializer_class = HouseSerializer
