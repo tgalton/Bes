@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import House, HouseworkPossibleTask, HouseworkMadeTask, History
+from django.utils import timezone
 
 
 class HouseSerializer(serializers.ModelSerializer):
@@ -34,6 +35,14 @@ class HouseworkMadeTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseworkMadeTask
         fields = ['id', 'name', 'score', 'date', 'duration', 'difficulty', 'user', 'house']
+
+# Warning : Doublon ?!
+class HouseworkMadeTaskDateRangeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseworkMadeTask
+        fields = ['id', 'name', 'score', 'date', 'duration', 'difficulty', 'user', 'house']
+
+# Serialiseur d'ajout de tâches réalisées
 
 
 class HistorySerializer(serializers.ModelSerializer):

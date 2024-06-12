@@ -2,41 +2,31 @@ from venv import logger
 from rest_framework import viewsets, status
 from .models import HouseScore, UserProfile
 from .serializers import CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
-from rest_framework import permissions
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import action
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import api_view, permission_classes, action
 from django.utils.decorators import method_decorator
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, csrf_protect
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from django.http import Http404, JsonResponse
-from rest_framework.decorators import api_view, permission_classes
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.contrib.auth.decorators import login_required
-from rest_framework import generics
 from django.core.exceptions import MultipleObjectsReturned
 
 
 # Vue pour le jeton CSRF
 @api_view(['GET'])  # Définir que la vue accepte uniquement les requêtes GET
-@permission_classes([IsAuthenticated])  # Exiger que l'utilisateur soit authentifié
+@permission_classes([permissions.IsAuthenticated])  # Exiger que l'utilisateur soit authentifié
 def csrf(request):
     """
     Vue pour retourner le jeton CSRF. L'utilisateur doit être authentifié pour y accéder.
     """
     return JsonResponse({'csrfToken': get_token(request)})
 
-# VueSet pour gérer les UserProfiles
-from django.contrib.auth.decorators import login_required
-from rest_framework import generics
-
+# CreateView pour créer les UserProfiles
 class UserProfileCreateView(generics.CreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
@@ -60,7 +50,6 @@ class UserProfileUpdateView(generics.UpdateAPIView):
             # Log cette erreur pour une intervention
             logger.error(f"Multiple profiles found for user {self.request.user.id}!")
             raise Http404("Plusieurs profils trouvés pour un utilisateur unique. Contactez l'assistance.")
-
 
 # VueSet pour gérer les HouseScores
 class HouseScoreViewSet(viewsets.ModelViewSet):
@@ -89,7 +78,7 @@ class CurrentUserView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     # @ensure_csrf_cookie
     @csrf_exempt     

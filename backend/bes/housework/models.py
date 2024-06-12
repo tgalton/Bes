@@ -1,6 +1,9 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
+from django.utils import timezone
+from django.conf import settings
 
 
 class House(models.Model):
@@ -20,6 +23,39 @@ class House(models.Model):
     
     def __str__(self):
         return self.name
+
+# L'expiration du token prend 7 jours
+def default_expires_at():
+    return timezone.now() + timezone.timedelta(days=7)
+
+# Model pour gérer la création et l'acceptation d'invitation dans une house
+class HouseInvitation(models.Model):
+    """
+    Model to manage the creation and acceptance of invitations to join a House.
+    
+    :param house: The house to which the invitation pertains.
+    :param invited_by: The user who created the invitation.
+    :param token: A unique UUID token used for invitation.
+    :param created_at: The datetime when the invitation was created.
+    :param expires_at: The datetime when the invitation expires.
+    :type house: models.ForeignKey
+    :type invited_by: models.ForeignKey
+    :type token: models.UUIDField
+    :type created_id: models.DateTimeField
+    :type expires_id: models.DateTimeField
+    """
+    house = models.ForeignKey(House, on_delete=models.CASCADE, verbose_name='Related house')
+    invited_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Inviting user')
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, verbose_name='Unique invitation token')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Invitation creation date')
+    expires_at = models.DateTimeField(default=default_expires_at, verbose_name='Invitation expiration date')
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"Invitation to {self.house.name} by {self.invited_by.username}"
+
 
 
 class HouseworkPossibleTask(models.Model):

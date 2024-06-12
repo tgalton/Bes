@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-n=136h)2renqhjl1k+4e4vmd)y5)3vgd&a2aq5u@-^^xezu_4v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'moz-extension://406da85c-fc3d-44b7-94e3-36e748ba3ad2']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://127.0.0.1']
 
 
 # Application definition
@@ -35,7 +36,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'rest_framework',
     'rest_framework_simplejwt',
-    'corsheaders',
+    # 'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -61,7 +62,7 @@ MIDDLEWARE = [
 #     "http://127.0.0.1:4200",  
 # ]
 # Pour autoriser toutes les origines (interdit pour la production) :
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'bes.urls'
 
