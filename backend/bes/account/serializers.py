@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from .models import HouseScore, UserProfile
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+
 
 
 
@@ -65,4 +68,20 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         else:
             raise serializers.ValidationError("Invalid email or password")
 
+# Serialiseur de changement de password
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    # Ici nous ajoutons une validation de mot de passe de Django en tant que validateur
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        password = validated_data.get('password', None)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance

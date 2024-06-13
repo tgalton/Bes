@@ -1,7 +1,7 @@
 from venv import logger
 from rest_framework import viewsets, status
 from .models import HouseScore, UserProfile
-from .serializers import CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
+from .serializers import ChangePasswordSerializer, CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -69,6 +69,42 @@ class UserCreateView(APIView):
             refresh = RefreshToken.for_user(user)
             return Response({'id': user.id, 'username': user.username, 'email': user.email, 'refresh': str(refresh), 'access': str(refresh.access_token)}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# Vu pour changer tout pour parti de son propre profil(password, username, email)
+class UserUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get_object(self):
+        # Assure que l'utilisateur ne peut mettre à jour que son propre profil
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid(raise_exception=True):
+            if 'password' in serializer.validated_data:
+                # Vérification de la longueur du mot de passe
+                password = serializer.validated_data['password']
+                if len(password) < 8:
+                    return Response({"password": ["Le mot de passe doit contenir au moins 8 caractères."]}, status=status.HTTP_400_BAD_REQUEST)
+
+                user.set_password(password)
+                serializer.validated_data.pop('password', None)
+
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_serializer_class(self):
+        # Utilisation d'un sérialiseur spécifique si nécessaire
+        if self.request and 'password' in self.request.data:
+            return ChangePasswordSerializer
+        return UserSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

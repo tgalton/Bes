@@ -2,17 +2,18 @@ export class User {
   // src/app/models/user.ts
   id: number;
   username: string;
+  password: string;
+  email?: string;
   age?: number;
   isActive?: boolean;
-  password: string;
   hearths?: string[];
   avatar?: string;
 
   constructor(
     id: number,
     username: string,
-    email: string,
     password: string,
+    email?: string,
     age?: number,
     isActive?: boolean,
     hearths?: string[],
