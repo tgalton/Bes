@@ -19,23 +19,18 @@ export class UserService {
   }
 
   // Méthode pour modifier un utilisateur existant
-  updateUser(user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/profiles/${user.id}/`, user);
+  updateUser(user: User) {
+    return this.http.patch<User>(`/api/user/update/`, user);
   }
 
   // Méthode pour récupérer un utilisateur
-  getUser(id: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/profiles/${id}/`);
+  getUser(id: number) {
+    return this.http.get<User>(`/api/user/${id}/`);
   }
 
   // Méthode pour mettre à jour l'avatar d'un utilisateur
-  updateUserAvatar(
-    userId: number | undefined,
-    avatarName: string | undefined
-  ): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/profiles/${userId}/update_avatar/`, {
-      avatar: avatarName,
-    });
+  updateUserAvatar(avatarName: string) {
+    return this.http.post(`/api/user/profile/update/`, { avatarName });
   }
 
   // Méthode pour récupérer les avatars et noms des utilisateurs par ID
@@ -43,7 +38,7 @@ export class UserService {
     userIds: number[]
   ): Observable<{ id: number; name: string; avatar: string }[]> {
     return this.http.post<{ id: number; name: string; avatar: string }[]>(
-      `${this.apiUrl}/profiles/get_avatars/`,
+      `${this.apiUrl}/user/profiles/get_avatars/`,
       { user_ids: userIds }
     );
   }

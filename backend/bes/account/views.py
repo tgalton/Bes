@@ -1,6 +1,8 @@
 from venv import logger
 from rest_framework import viewsets, status
-from .models import HouseScore, UserProfile
+
+
+from .models import HouseScore, UserProfile, House
 from .serializers import ChangePasswordSerializer, CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
 from rest_framework import generics, permissions
 from rest_framework.response import Response
@@ -124,3 +126,32 @@ class CurrentUserView(generics.RetrieveAPIView):
         associated with the request.user.
         """
         return self.request.user
+    
+
+class UserSharedHouseProfiles(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user_ids = request.data.get('user_ids', [])
+        
+        if not user_ids:
+            return Response({"error": "No user ids provided"}, status=status.HTTP_400_BADB_REQUEST)
+
+        # Récupérer les foyers en commun avec l'utilisateur authentifié
+        shared_houses = House.objects.filter(users=request.user)
+        
+        # Recherche des utilisateurs parmi les ids donnés
+        potential_shared_users = User.objects.filter(id__in=user_ids).distinct()
+
+        # Filtrer seulement ceux qui sont dans les foyers partagés
+        shared_users = [user for user in potential_shared_users if shared_houses.intersection(user.house_set.all()).exists()]
+
+        # Prépare la réponse
+        result = [{
+            'id': user.id,
+            'name': user.username,
+            'avatar': user.profile.avatar if hasattr(user, 'profile') and user.profile and user.profile.avatar else None
+        } for user in shared_users]
+
+        return Response(result)
+

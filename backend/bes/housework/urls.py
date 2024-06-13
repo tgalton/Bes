@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/houses/', views.house_list),
     path('api/houses/details', HouseViewSet.as_view({'get': 'list'})),
     path('api/houses/<int:pk>/', views.house_detail),
+    
     # Requête pour les tâches
     path('api/houses/<int:house_id>/tasks/', views.get_possible_tasks, name='house_tasks'),
     path('api/tasks/possible/add/', views.add_possible_task, name='add_possible_task'),
