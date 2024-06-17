@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 
 
 from .models import HouseScore, UserProfile, House
-from .serializers import ChangePasswordSerializer, CustomTokenObtainPairSerializer, HouseScoreSerializer, UserSerializer, UserProfileSerializer
+from .serializers import ChangePasswordSerializer, CustomTokenObtainPairSerializer, HouseScoreSerializer, UserDetailsSerializer, UserSerializer, UserProfileSerializer
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -60,8 +60,9 @@ class HouseScoreViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 # Vue pour créer un utilisateur
-class UserCreateView(APIView):
+class UserCreateView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = UserDetailsSerializer
 
     @csrf_exempt     
     def post(self, request, *args, **kwargs):
@@ -72,49 +73,45 @@ class UserCreateView(APIView):
             return Response({'id': user.id, 'username': user.username, 'email': user.email, 'refresh': str(refresh), 'access': str(refresh.access_token)}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-# Vu pour changer tout pour parti de son propre profil(password, username, email)
-class UserUpdateView(generics.UpdateAPIView):
+class UserProfileDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserDetailsSerializer
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+
+    def get_queryset(self):
+        # Filtrer les utilisateurs selon la relation House pour s'assurer de retourner les utilisateurs partageant le même 'house' que le requérant
+        users_in_common_houses = User.objects.filter(house__in=self.request.user.house_set.all()).distinct()
+        return users_in_common_houses
+    
+# Vu pour changer tout pour parti de son propre profil(password, username, email)
+class UserUpdateView(generics.UpdateAPIView):  
+    permission_classes = [permissions.IsAuthenticated] 
+    serializer_class = UserDetailsSerializer
 
     def get_object(self):
-        # Assure que l'utilisateur ne peut mettre à jour que son propre profil
         return self.request.user
 
     def update(self, request, *args, **kwargs):
-        user = self.get_object()
-        serializer = self.get_serializer(user, data=request.data, partial=True)
+        kwargs['partial'] = True  # Set partial to True to allow partial updates
+        return super().update(request, *args, **kwargs)
 
-        if serializer.is_valid(raise_exception=True):
-            if 'password' in serializer.validated_data:
-                # Vérification de la longueur du mot de passe
-                password = serializer.validated_data['password']
-                if len(password) < 8:
-                    return Response({"password": ["Le mot de passe doit contenir au moins 8 caractères."]}, status=status.HTTP_400_BAD_REQUEST)
-
-                user.set_password(password)
-                serializer.validated_data.pop('password', None)
-
-            serializer.save()
-            return Response(serializer.data)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def perform_update(self, serializer):
+        serializer.save()
 
     def get_serializer_class(self):
-        # Utilisation d'un sérialiseur spécifique si nécessaire
+        # Switch serializer if updating password
         if self.request and 'password' in self.request.data:
             return ChangePasswordSerializer
-        return UserSerializer
+        return UserDetailsSerializer
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 # Vue pour récupérer l'utilisateur courant via token actuel
 class CurrentUserView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    # queryset = User.objects.all()
+    serializer_class = UserDetailsSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 

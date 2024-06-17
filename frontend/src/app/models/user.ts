@@ -4,7 +4,6 @@ export class User {
   username: string;
   password: string;
   email?: string;
-  age?: number;
   isActive?: boolean;
   hearths?: string[];
   avatar?: string;
@@ -14,7 +13,6 @@ export class User {
     username: string,
     password: string,
     email?: string,
-    age?: number,
     isActive?: boolean,
     hearths?: string[],
     avatar?: string
@@ -23,7 +21,6 @@ export class User {
     this.username = username;
     this.email = email;
     this.password = password;
-    this.age = age;
     this.isActive = isActive;
     this.hearths = hearths;
     this.avatar = avatar;

@@ -12,25 +12,40 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  // Méthode pour ajouter un nouvel utilisateur
+  // Méthode pour ajouter un nouvel utilisateur (soit-même) lors
+  // de la création de compte
   addUser(user: User): Observable<User> {
     console.log(`${this.apiUrl}/register/`);
     return this.http.post<User>(`${this.apiUrl}/register/`, user);
   }
 
-  // Méthode pour modifier un utilisateur existant
-  updateUser(user: User) {
-    return this.http.patch<User>(`/api/user/update/`, user);
+  // Méthode pour modifier un utilisateur existant, ne fonctione que sur soit-même
+  updateUser(user: Partial<User>): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/user/update/`, user);
   }
 
-  // Méthode pour récupérer un utilisateur
-  getUser(id: number) {
-    return this.http.get<User>(`/api/user/${id}/`);
+  // Méthode pour récupérer un utilisateur, à la condition que cet
+  // utilisateur partage un hearth ou house avec la personne connectée effectuant la requête
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/user/${id}/`);
   }
 
-  // Méthode pour mettre à jour l'avatar d'un utilisateur
-  updateUserAvatar(avatarName: string) {
-    return this.http.post(`/api/user/profile/update/`, { avatarName });
+  // Méthode pour mettre à jour l'avatar d'un utilisateur, devrait
+  // utiliser updateUser idéalement
+  updateUserAvatar(
+    userId: number | undefined,
+    avatarName: string
+  ): Observable<User> {
+    if (userId === undefined) {
+      throw new Error('userId ne peut pas être undefined');
+    }
+    // Création du payload avec l'ID et l'avatar pour la mise à jour
+    const updateData: Partial<User> = {
+      id: userId,
+      avatar: avatarName,
+    };
+    // Utilisation de la méthode updateUser pour effectuer la mise à jour
+    return this.updateUser(updateData);
   }
 
   // Méthode pour récupérer les avatars et noms des utilisateurs par ID

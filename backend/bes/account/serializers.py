@@ -1,7 +1,7 @@
 # bes/account/serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import HouseScore, UserProfile
+from .models import HouseScore, UserProfile, House
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
@@ -85,3 +85,55 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+    
+# Puisque le modèle front-end Angular attend un user
+# qui comprend des attributs à la fois de User et de UserProfile,
+# on utilise un serializer qui compose ces deux modèles.
+class UserDetailsSerializer(serializers.ModelSerializer):
+    isActive = serializers.BooleanField(source='profile.is_active')
+    hearths = serializers.SlugRelatedField(
+        many=True,
+        slug_field='name',
+        queryset=House.objects.all(),
+        source='house_set'
+    )
+    # On stocke simplement le nom de l'avatar
+    avatar = serializers.CharField(source='profile.avatar', allow_blank=True, required=False) 
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password', 'isActive', 'hearths', 'avatar')
+        extra_kwargs = {
+            'username': {'required': False},  # Pas nécessaire pour la mise à jour
+            'password': {'write_only': True, 'required': False},  # Pas nécessaire sauf pour certains cas de mise à jour
+            'email': {'write_only': True, 'required': False},  # Pas nécessaire sauf pour certains cas de mise à jour
+        }
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        hearths = validated_data.pop('house_set', [])
+        user = User.objects.create_user(**validated_data)
+        UserProfile.objects.create(user=user, **profile_data)
+        user.house_set.set(hearths)
+        return user
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        hearths = validated_data.pop('house_set', [])
+
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.house_set.set(hearths)
+        
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+        
+        instance.save()
+
+        # Update UserProfile
+        for attr, value in profile_data.items():
+            setattr(instance.profile, attr, value)
+        instance.profile.save()
+
+        return instance
+

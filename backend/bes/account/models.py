@@ -41,6 +41,7 @@ class UserProfile(models.Model):
     
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     avatar = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)  # Ajout du champ is_active
 
     def __str__(self):
         return self.user.username
