@@ -18,10 +18,10 @@
         Le mot de passe est obligatoire.
       </ion-text>
       <ion-text *ngIf="passwordControl?.errors?.['minLength'] && passwordControl?.touched" color="danger">
-        Le mot de passe doit contenir au moins 8 caractères.
+        Le mot de passe contient au moins 8 caractères.
       </ion-text>
       <ion-text *ngIf="passwordControl?.errors?.['passwordStrength'] && passwordControl?.touched" color="danger">
-        Le mot de passe doit contenir des lettres (maj + min), des chiffres et des caractères spéciaux.
+        Le mot de passe contient des lettres (maj + min), des chiffres et des caractères spéciaux.
       </ion-text>
       <ion-row>
         <ion-col>

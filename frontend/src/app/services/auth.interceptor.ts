@@ -19,6 +19,8 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const authToken = this.authService.getToken();
+    console.log('Current Token in Interceptor:', authToken); // Déboguer la valeur du token
+
     if (authToken) {
       req = req.clone({
         setHeaders: {
@@ -29,7 +31,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Handle specific HttpStatus codes or pass the error along
         return throwError(() => error);
       })
     );

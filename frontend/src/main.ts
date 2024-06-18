@@ -9,7 +9,11 @@ import {
   provideIonicAngular,
 } from '@ionic/angular/standalone';
 
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http'; // Assurez-vous d'importer HTTP_INTERCEPTORS
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http'; // Assurez-vous d'importer HTTP_INTERCEPTORS
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -31,6 +35,8 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes),
@@ -39,11 +45,9 @@ bootstrapApplication(AppComponent, {
       auth: authReducer,
       hearths: hearthsReducer,
     }),
-    provideHttpClient(),
     provideClientHydration(),
     provideEffects([AuthEffects, UserEffects, HearthEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, // Ajouter l'intercepteur ici
-    AuthService, // Ajouter AuthService ici si nécessaire
+    AuthService,
   ],
 });

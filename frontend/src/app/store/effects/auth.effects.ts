@@ -32,13 +32,17 @@ export class AuthEffects {
           .authenticateUser(action.email, action.password)
           .pipe(
             // Si l'authentification réussit, déclenche l'action `loginSuccess` et récupère l'user pour UserStore
-            concatMap((user) => {
-              console.log('Effect: loginSuccess', user); // Log de l'utilisateur authentifié
-              // Retourne les actions `loginSuccess` et `loadUserSuccess`
+            concatMap((response) => {
+              console.log('Effect: loginSuccess', response);
+              const user = {
+                id: response.user_id,
+                email: response.email,
+                username: response.username,
+              };
               return [
-                AuthActions.loginSuccess({ user }),
-                UserActions.loadUserSuccess({ user }),
-                HearthActions.loadHearths({ userId: user.id }),
+                AuthActions.loginSuccess({ user, userId: response.user_id }),
+                UserActions.loadUser({ id: response.user_id }),
+                HearthActions.loadHearths({ userId: response.user_id }),
               ];
             }),
             // Si l'authentification échoue, déclenche l'action `loginFailure`

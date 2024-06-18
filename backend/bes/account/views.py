@@ -132,7 +132,7 @@ class UserSharedHouseProfiles(APIView):
         user_ids = request.data.get('user_ids', [])
         
         if not user_ids:
-            return Response({"error": "No user ids provided"}, status=status.HTTP_400_BADB_REQUEST)
+            return Response({"error": "No user ids provided"}, status=status.HTTP_400_BAB_REQUEST)
 
         # Récupérer les foyers en commun avec l'utilisateur authentifié
         shared_houses = House.objects.filter(users=request.user)

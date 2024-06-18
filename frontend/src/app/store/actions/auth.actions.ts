@@ -14,7 +14,7 @@ export const login = createAction(
 // Action pour signaler une connexion réussie
 export const loginSuccess = createAction(
   '[Auth API] Login Success',
-  props<{ user: User }>()
+  props<{ user: User; userId: number }>()
 );
 
 // Action pour signaler un échec de connexion

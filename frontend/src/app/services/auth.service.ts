@@ -1,5 +1,9 @@
 // auth.service.ts
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable, of, throwError } from 'rxjs';
@@ -10,16 +14,24 @@ import { catchError, tap } from 'rxjs/operators';
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8000/account';
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  };
   constructor(private http: HttpClient) {}
 
   authenticateUser(email: string, password: string): Observable<any> {
     return this.http
-      .post<{ access: string; refresh: string }>(`${this.apiUrl}/login/`, {
-        email,
-        password,
-      })
+      .post<{ access: string; refresh: string; user_id: number }>(
+        `${this.apiUrl}/login/`,
+        {
+          email,
+          password,
+        },
+        this.httpOptions
+      )
       .pipe(
         tap((resp) => {
+          console.log(resp.access);
           localStorage.setItem('auth_token', resp.access);
           localStorage.setItem('refresh_token', resp.refresh);
         }),
@@ -44,6 +56,18 @@ export class AuthService {
   isLogged(): Observable<boolean> {
     const token = localStorage.getItem('auth_token');
     return of(!!token); // retourne true si le token est présent, sinon false
+  }
+
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    return this.http
+      .post<{ access: string }>(`${this.apiUrl}/refresh/`, {
+        refresh: refreshToken,
+      })
+      .pipe(
+        tap((resp) => localStorage.setItem('auth_token', resp.access)),
+        catchError(this.handleError)
+      );
   }
 
   static isValidPassword(): ValidatorFn {
