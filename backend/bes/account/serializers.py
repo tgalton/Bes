@@ -97,17 +97,23 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         queryset=House.objects.all(),
         source='house_set'
     )
-    # On stocke simplement le nom de l'avatar
-    avatar = serializers.CharField(source='profile.avatar', allow_blank=True, required=False) 
+    avatar = serializers.CharField(source='profile.avatar', allow_blank=True, required=False)
 
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password', 'isActive', 'hearths', 'avatar')
         extra_kwargs = {
-            'username': {'required': False},  # Pas nécessaire pour la mise à jour
-            'password': {'write_only': True, 'required': False},  # Pas nécessaire sauf pour certains cas de mise à jour
-            'email': {'write_only': True, 'required': False},  # Pas nécessaire sauf pour certains cas de mise à jour
+            'username': {'required': False},
+            'password': {'write_only': True, 'required': False},
         }
+
+    # def to_representation(self, instance):
+    #     """Manipulate data representation based on the context."""
+    #     ret = super().to_representation(instance)
+    #     # Remove email information if not the self user view
+    #     if not self.context.get('include_email', False):
+    #         ret.pop('email', None)
+    #     return ret
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile', {})

@@ -110,7 +110,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 # Vue pour récupérer l'utilisateur courant via token actuel
 class CurrentUserView(generics.RetrieveAPIView):
-    # queryset = User.objects.all()
     serializer_class = UserDetailsSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -124,7 +123,14 @@ class CurrentUserView(generics.RetrieveAPIView):
         """
         return self.request.user
     
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['include_email'] = True
+        return context    
 
+
+# Renvoie contre une liste id les info user si l'utilisateur
+# connecté et le user demandé ont une house en commun.
 class UserSharedHouseProfiles(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

@@ -12,7 +12,10 @@ export const selectAuthState = (appstate: AppState) => appstate.auth;
 // Sélecteur pour obtenir l'utilisateur connecté
 export const selectUser = createSelector(
   selectAuthState,
-  (authstate: AuthState) => authstate.user
+  (authstate: AuthState) => {
+    console.log(authstate.user);
+    return authstate.user;
+  }
 );
 
 // Sélecteur pour vérifier si l'utilisateur est connecté

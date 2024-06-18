@@ -35,8 +35,8 @@ import { AvatarService } from 'src/app/services/avatar.service';
 import { EditAvatarComponent } from 'src/app/shared/edit-avatar/edit-avatar.component';
 import * as AuthActions from 'src/app/store/actions/auth.actions';
 import * as UserActions from 'src/app/store/actions/user.actions';
-import { selectUser } from 'src/app/store/selectors/auth.selector';
 import {
+  selectUser,
   selectUserAvatar,
   selectUserError,
   selectUserLoading,
@@ -105,15 +105,9 @@ export class AccountPage implements OnInit {
   }
 
   ngOnInit() {
-    // // Récupération de la liste d'icones d'avatars
-    // this.http
-    //   .get<Icon[]>('./../../assets/icons.json')
-    //   .subscribe((data: Icon[]) => {
-    //     this.avatarList = data;
-    //   });
-
     this.user$.subscribe((user) => {
       if (user) {
+        console.log('accountPage user : ' + user.username);
         this.accountForm.patchValue({
           username: user.username,
           email: user.email,

@@ -1,85 +1,33 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
-import { Hearth, HearthUser } from '../models/hearth';
+import { Observable } from 'rxjs';
+import { Hearth } from '../models/hearth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HearthService {
-  private hearths: Hearth[] = [
-    new Hearth(
-      1,
-      'Maison',
-      [new HearthUser(1, undefined, undefined)],
-      'club-house',
-      1
-    ),
-    new Hearth(
-      2,
-      'Coloc',
-      [
-        new HearthUser(1, undefined, undefined),
-        new HearthUser(3, undefined, undefined),
-      ],
-      'batiment-de-la-ville',
-      3
-    ),
-    new Hearth(
-      3,
-      'Maison Vacance',
-      [
-        new HearthUser(1, undefined, undefined),
-        new HearthUser(2, undefined, undefined),
-      ],
-      'house-plants',
-      3
-    ),
-  ];
+  private apiUrl = 'http://localhost:8000/housework';
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  getHearthsByUser(userId: number): Observable<Hearth[]> {
+  // Récupère la liste de ses propres hearths
+  getHearthsByUser(): Observable<Hearth[]> {
     // Doit récupérer la liste de foyers de l'utilisateur
-    return of(this.hearths).pipe(
-      delay(1000),
-      map((hearths) =>
-        hearths.filter((hearth) =>
-          hearth.hearthUsers.some((user) => user.id === userId)
-        )
-      )
-    ); // Simule une requête HTTP avec délai
+    return this.http.get<Hearth[]>(`${this.apiUrl}/api/houses/`);
   }
 
   addHearth(hearth: Hearth): Observable<Hearth> {
-    return of(hearth).pipe(
-      tap((newHearth) => {
-        this.hearths.push(newHearth);
-      }),
-      delay(1000)
-    );
+    return this.http.post<Hearth>(`${this.apiUrl}/api/houses/`, hearth);
   }
 
-  updateHearth(hearth: Hearth): Observable<Hearth> {
-    return of(hearth).pipe(
-      tap((updatedHearth) => {
-        const index = this.hearths.findIndex((h) => h.id === updatedHearth.id);
-        if (index !== -1) {
-          this.hearths[index] = updatedHearth;
-        }
-      }),
-      delay(1000)
-    );
+  updateHearth(hearth: Partial<Hearth>): Observable<Hearth> {
+    return this.http.patch<Hearth>(`${this.apiUrl}/api/houses/`, hearth);
   }
 
-  deleteHearth(id: number): Observable<null> {
-    return of(null).pipe(
-      tap(() => {
-        this.hearths = this.hearths.filter((h) => h.id !== id);
-      }),
-      delay(1000)
-    );
-  }
+  // deleteHearth(id: number) {
+  //   return this.http.delete<Hearth>(`${this.apiUrl}/api/houses/`, id);
+  // }
 
   sendHeartInvite() {}
 

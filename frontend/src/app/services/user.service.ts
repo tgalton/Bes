@@ -15,7 +15,6 @@ export class UserService {
   // Méthode pour ajouter un nouvel utilisateur (soit-même) lors
   // de la création de compte
   addUser(user: User): Observable<User> {
-    console.log(`${this.apiUrl}/register/`);
     return this.http.post<User>(`${this.apiUrl}/register/`, user);
   }
 
@@ -28,6 +27,10 @@ export class UserService {
   // utilisateur partage un hearth ou house avec la personne connectée effectuant la requête
   getUser(id: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user/${id}/`);
+  }
+
+  getUserSelf(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/user/self/`);
   }
 
   // Méthode pour mettre à jour l'avatar d'un utilisateur, devrait

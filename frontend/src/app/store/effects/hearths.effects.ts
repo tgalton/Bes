@@ -19,7 +19,7 @@ export class HearthEffects {
     return this.actions$.pipe(
       ofType(HearthActions.loadHearths), // Écoute l'action de chargement des `hearths`
       switchMap((action) =>
-        this.hearthService.getHearthsByUser(action.userId).pipe(
+        this.hearthService.getHearthsByUser().pipe(
           exhaustMap((hearths: Hearth[]) => {
             // Utilise `Set` pour éliminer les doublons des identifiants d'utilisateurs
             const userIds = [

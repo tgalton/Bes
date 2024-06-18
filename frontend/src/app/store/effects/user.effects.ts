@@ -15,7 +15,7 @@ export class UserEffects {
       ofType(UserActions.loadUser),
       switchMap((action) => {
         console.log('Effect: Load User', action);
-        return this.userService.getUser(action.id).pipe(
+        return this.userService.getUserSelf().pipe(
           map((user) => {
             console.log('Effect: Load User Success', user);
             return UserActions.loadUserSuccess({ user });
