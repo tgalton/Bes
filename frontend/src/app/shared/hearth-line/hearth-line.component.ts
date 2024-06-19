@@ -35,14 +35,13 @@ export class HearthLineComponent implements OnInit {
 
   getImagePath(imageName: string | undefined): Observable<string> {
     if (!imageName) {
-      return of('path/to/default/icon.jpg'); // TODO: Replace with actual path
+      return of('assets/hearth-images/defaultHouse.png');
     }
-    console.log(imageName);
     return this.avatarService.getHearthImageByName(imageName).pipe(
       tap((imagePath) => console.log(imagePath)),
       catchError((error) => {
         console.error('Error retrieving avatar:', error);
-        return of('path/to/error/icon.jpg'); // TODO: Replace with actual error path
+        return of('assets/hearth-images/defaultHouse.png');
       })
     );
   }

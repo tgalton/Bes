@@ -48,12 +48,12 @@ export class AvatarService {
   getAvatarPathFromName(name: string | undefined): Observable<string> {
     if (name === undefined) {
       // Retourne l'URL de l'image par défaut si le nom n'est pas défini
-      return of('path/to/default/avatar.jpg');
+      return of('assets/icons/defaultAvatar.png');
     } else {
       return this.getAllAvatars().pipe(
         map((avatars) => {
           const avatar = avatars.find((a) => a.name === name);
-          return avatar ? avatar.path : 'path/to/default/avatar.jpg';
+          return avatar ? avatar.path : 'assets/icons/defaultAvatar.png';
         }),
         catchError((err) => {
           console.error('Error while fetching avatar path:', err);

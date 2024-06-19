@@ -4,17 +4,16 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 class UserHouseDetailSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField(source='profile.avatar')
-
+    avatar = serializers.CharField(source='profile.avatar', read_only=True)
     class Meta:
         model = User
         fields = ['id', 'username', 'avatar']
 
 class HouseSerializer(serializers.ModelSerializer):
-    users = UserHouseDetailSerializer(many=True)
+    users = UserHouseDetailSerializer(many=True, read_only=True)
     class Meta:
         model = House
-        fields = ['id', 'name', 'users']
+        fields = ['id', 'name', 'users', 'avatar']
 
 
 class HouseworkPossibleTaskSerializer(serializers.ModelSerializer):

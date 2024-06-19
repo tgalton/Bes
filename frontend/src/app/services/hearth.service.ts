@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Hearth } from '../models/hearth';
+import { Observable, map } from 'rxjs';
+import { Hearth, HearthUser } from '../models/hearth';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +14,23 @@ export class HearthService {
 
   // Récupère la liste de ses propres hearths
   getHearthsByUser(): Observable<Hearth[]> {
-    // Doit récupérer la liste de foyers de l'utilisateur
-    return this.http.get<Hearth[]>(`${this.apiUrl}/api/houses/`);
+    return this.http.get<any[]>(`${this.apiUrl}/api/houses/details/`).pipe(
+      map((data) =>
+        data.map(
+          (item) =>
+            new Hearth(
+              item.id,
+              item.name,
+              item.users.map(
+                (user: User) =>
+                  new HearthUser(user.id, user.username, user.avatar)
+              ),
+              item.avatar,
+              1 // TODO: Renvoyé l'admin
+            )
+        )
+      )
+    );
   }
 
   addHearth(hearth: Hearth): Observable<Hearth> {
@@ -29,7 +45,11 @@ export class HearthService {
   //   return this.http.delete<Hearth>(`${this.apiUrl}/api/houses/`, id);
   // }
 
-  sendHeartInvite() {}
-
-  acceptHeartInvite() {}
+  // Créer un token d'invitation pour un Hearth.
+  sendHeartInvite(hearthId: string): Observable<any> {
+    return this.http.post<string>(
+      `${this.apiUrl}/api/houses/${hearthId}/`,
+      hearthId
+    );
+  }
 }

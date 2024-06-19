@@ -13,13 +13,16 @@ class House(models.Model):
     :param name: The place name (ex: Home, Holiday location, Grandma house, ...).
     :param users: The users who are sharing the place and associated houseworks.
     :param admin_user: The admin user.
+    :param avatar: Name of the used avatar.
     :type name: models.CharField
     :type users: models.ManyToManyField
     :type admin_user: models.ForeignKey
+    :type avatar: models.CharField
     """
     name = models.CharField(max_length=200)
     users = models.ManyToManyField(User)
     admin_user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='house_admin_set')
+    avatar = models.CharField(max_length=200, blank=True, default=None, null=True)
     
     def __str__(self):
         return self.name

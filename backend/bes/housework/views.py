@@ -26,6 +26,7 @@ from django.utils.dateparse import parse_datetime
 
 
 
+
 # TODO: ajouter :
 # (login_url="/accounts/login/") au tag "login_required"
 # ou 
@@ -54,33 +55,43 @@ def house_list(request):
     
 
 @login_required
-# @ensure_csrf_cookie
 @csrf_exempt
-# @method_decorator(csrf_exempt, name='dispatch')
-def house_detail(request, pk):
+def house_detail(request, pk=None):
     """
-    Retrieve, update or delete a code house.
+    Retrieve, update, delete, or create a house.
     """
-    try:
-        house = House.objects.get(pk=pk)
-    except House.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = HouseSerializer(house)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
+    if request.method == 'POST':
         data = JSONParser().parse(request)
-        serializer = HouseSerializer(house, data=data)
+        serializer = HouseSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
-    elif request.method == 'DELETE':
-        house.delete()
-        return HttpResponse(status=204)
+    if pk is not None:
+        try:
+            house = House.objects.get(pk=pk)
+        except House.DoesNotExist:
+            return HttpResponse(status=404)
+
+        if request.method == 'GET':
+            serializer = HouseSerializer(house)
+            return JsonResponse(serializer.data)
+
+        elif request.method == 'PUT':
+            data = JSONParser().parse(request)
+            serializer = HouseSerializer(house, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(serializer.data)
+            return JsonResponse(serializer.errors, status=400)
+
+        elif request.method == 'DELETE':
+            house.delete()
+            return HttpResponse(status=204)
+    else:
+        # Additional logic can be implemented here if needed (like handling a GET request without a 'pk' to list all houses)
+        return HttpResponse('Method not allowed', status=405)
 
 
 
@@ -211,7 +222,7 @@ class HouseworkMadeTaskDateRangeView(views.APIView):
         serializer = HouseworkMadeTaskDateRangeSerializer(tasks, many=True)
         return Response(serializer.data)
     
-# Permet d'enrigistrer une liste de tâches réalisées à son nom.
+# Permet d'enregistrer une liste de tâches réalisées à son nom.
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_multiple_made_tasks(request):
