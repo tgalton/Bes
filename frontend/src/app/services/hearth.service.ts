@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, map, switchMap, tap } from 'rxjs';
+import * as HearthActions from 'src/app/store/actions/hearths.actions';
 import { Hearth, HearthUser } from '../models/hearth';
 import { User } from '../models/user';
 import { selectUser } from '../store/selectors/user.selector';
@@ -61,8 +62,22 @@ export class HearthService {
     return this.http.post<Hearth>(`${this.apiUrl}/api/houses/`, hearth);
   }
 
-  updateHearth(hearth: Partial<Hearth>): Observable<Hearth> {
-    return this.http.patch<Hearth>(`${this.apiUrl}/api/houses/`, hearth);
+  updateHearthDetails(
+    hearthId: number,
+    updates: Partial<Hearth>
+  ): Observable<Hearth> {
+    return this.http
+      .patch<Hearth>(`${this.apiUrl}/api/houses/${hearthId}`, updates)
+      .pipe(
+        tap((updatedHearth) => {
+          this.store.dispatch(
+            HearthActions.updateHearthDetails({
+              hearthId: hearthId,
+              updates: updatedHearth,
+            })
+          );
+        })
+      );
   }
 
   // deleteHearth(id: number) {

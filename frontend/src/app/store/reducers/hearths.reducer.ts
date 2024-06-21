@@ -30,5 +30,11 @@ export const hearthsReducer = createReducer(
   on(HearthActions.deleteHearth, (state, { hearthId }) => ({
     ...state,
     hearths: state.hearths.filter((h) => h.id !== hearthId),
+  })),
+  on(HearthActions.updateHearthDetails, (state, { hearthId, updates }) => ({
+    ...state,
+    hearths: state.hearths.map((hearth) =>
+      hearth.id === hearthId ? { ...hearth, ...updates } : hearth
+    ),
   }))
 );
