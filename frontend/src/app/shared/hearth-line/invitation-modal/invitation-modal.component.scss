@@ -1,0 +1,70 @@
+/* invitation-modal.component.scss */
+
+ion-header {
+  // --ion-background-color: #ffffff; // Fond blanc pour l'en-tête
+  --ion-color: #000; // Texte en noir
+}
+
+ion-toolbar {
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --min-height: 56px;
+  // background: #ffffff; // Fond blanc pour la barre d'outils
+  --border-width: 0 0 1px 0; // Bordure fine en bas
+  --border-color: #00000020; // Couleur de bordure subtile
+}
+
+ion-title {
+  font-size: 26px; // Taille plus grande pour le titre
+  font-weight: bold; // Gras pour le titre
+}
+
+ion-content {
+  display: flex;
+  margin: auto;
+  .contener {
+    max-width: 420px;
+    margin: auto;
+    justify-content: center;
+    margin-top: 2em;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+ion-item {
+  display: flex;
+  align-items: center; // Centrer verticalement les éléments d'ion-item
+  --background: #333;
+  --color: white;
+  margin-bottom: 16px;
+}
+
+// Styling pour l'input
+.link-input {
+  flex: 1; // Prend tout l'espace disponible
+  margin-right: 8px; // Laisser de l'espace entre l'input et le bouton
+}
+
+ion-label {
+  padding-bottom: 20px;
+  min-width: 350px;
+  color: white;
+}
+
+ion-input {
+  min-width: 320px;
+  color: white;
+}
+
+ion-button {
+  margin-top: 0; // Adjust if necessary based on design needs
+  min-width: 50px;
+  // Style for better visibility or aesthetics
+  --background: deepskyblue; // Example color
+  --color: #fff; // White text color
+
+  ion-icon {
+    font-size: 1.8em; // Slightly bigger icon
+  }
+}

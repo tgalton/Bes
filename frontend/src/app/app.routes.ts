@@ -54,6 +54,15 @@ export const routes: Routes = [
     ],
   },
 
+  {
+    path: 'invitation',
+    loadComponent: () =>
+      import('./pages/invitation/invitation.page').then(
+        (m) => m.InvitationPage
+      ),
+    data: { title: 'Invitation' },
+  },
+
   // Plutôt que les routes ci-dessous, on favorise un lazyloading via le loadcomponent
   // { path: 'forgot-password', component: ForgotPasswordComponent },
   // { path: 'hearts', component: HearthsComponent },

@@ -1,0 +1,23 @@
+<!-- invitation-modal.component.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Lien d'invitation</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="contener">
+    <ion-item lines="none">
+      <ion-label position="stacked">
+        Transmettez ce lien pour inviter d'autres utilisateurs:
+      </ion-label>
+      <ion-item lines="none">
+        <ion-input [value]="invitationLink" readonly class="link-input"></ion-input>
+        <ion-button fill="clear" (click)="copyLinkToClipboard()">
+          <ion-icon name="clipboard-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-item>
+
+    <ion-button expand="full" (click)="copyLinkToClipboard()">Copier</ion-button>
+  </div>
+</ion-content>

@@ -162,7 +162,10 @@ def update_possible_task(request, task_id):
 # @method_decorator(csrf_exempt, name='dispatch')
 @permission_classes([IsAuthenticated])
 def generate_invitation(request, house_id):
+    print("User ID:", request.user.id)  # assurez-vous d’avoir l'ID
+    print("House ID:", house_id)  # ID de la maison
     house = House.objects.filter(id=house_id, users=request.user).first()
+    print("House:", house)
     if not house:
         return Response({'error': 'House not found or access denied'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -172,6 +175,7 @@ def generate_invitation(request, house_id):
 # Vue pour accepter une invitation via Token dans une House
 @api_view(['POST'])
 @csrf_exempt
+@permission_classes([IsAuthenticated])
 def accept_invitation(request, token):
     try:
         invitation = HouseInvitation.objects.get(token=token, expires_at__gte=timezone.now())
@@ -191,6 +195,7 @@ def accept_invitation(request, token):
 # Récupère la liste des tâches réalisées entre deux dates :
 # Cette vue filtre les instances de HouseworkMadeTask sur la base des paramètres start_date, end_date, et house_id.
 # Format de date conforme à ISO 8601 incluant le timezone UTC
+@permission_classes([IsAuthenticated])
 class HouseworkMadeTaskDateRangeView(views.APIView):
     def get(self, request, *args, **kwargs):
         # Récupérer les paramètres de la requête

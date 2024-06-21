@@ -72,7 +72,7 @@ export class HearthService {
   // Créer un token d'invitation pour un Hearth.
   sendHeartInvite(hearthId: string): Observable<any> {
     return this.http.post<string>(
-      `${this.apiUrl}/api/houses/${hearthId}/`,
+      `${this.apiUrl}/api/house/${hearthId}/invite/`,
       hearthId
     );
   }
