@@ -15,7 +15,6 @@ export class HearthService {
   currentUser$: Observable<User | null> = this.store.select(selectUser);
 
   constructor(private http: HttpClient, private store: Store) {}
-
   // Récupère la liste de ses propres hearths
   // Méthode publique pour récupérer des hearths par un utilisateur spécifique
   getHearthsByUser(): Observable<Hearth[]> {
@@ -53,7 +52,7 @@ export class HearthService {
       item.id,
       item.name,
       hearthUsers,
-      item.avatar,
+      item.imageName,
       1 // TODO: Remplacer par l'ID réel de l'administrateur de la base de données
     );
   }
@@ -91,4 +90,6 @@ export class HearthService {
       hearthId
     );
   }
+
+  deleteHearthUser(hearthUserId: string, hearthId: string) {}
 }

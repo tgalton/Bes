@@ -70,6 +70,11 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
     }
   }
 
+  changeHearthImage(hearthImage: any) {
+    const hearthUpdate: Partial<Hearth> = { imageName: hearthImage.name };
+    this.updateHearth(hearthUpdate);
+  }
+
   initializeForm() {
     this.hearthForm = this.formBuilder.group({
       name: [this.hearth.name || '', Validators.required],
@@ -84,12 +89,15 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
   }
 
   removeUser(userId: number) {
+    console.log(userId);
     // Code pour retirer un utilisateur d'un Hearth
     const updatedUsers = this.hearth.hearthUsers.filter(
       (hearthUser) => hearthUser.id !== userId
     );
+    console.log(updatedUsers);
+    const updatedUsersInHearth: Partial<Hearth> = { hearthUsers: updatedUsers };
     this.hearthService
-      .updateHearthDetails(this.hearth.id, { hearthUsers: updatedUsers })
+      .updateHearthDetails(this.hearth.id, updatedUsersInHearth)
       .subscribe({
         next: (updatedHearth) => {
           console.log('User removed', updatedHearth);
@@ -98,7 +106,4 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
         error: (error) => console.error('Failed to remove user', error),
       });
   }
-
-  changeHearthImage(hearthImage: any) {}
-  private loadHearthImages() {}
 }

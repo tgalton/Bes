@@ -14,7 +14,7 @@ class HouseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = House
-        fields = ['id', 'name', 'users', 'avatar', 'admin_user']
+        fields = ['id', 'name', 'users', 'imageName', 'admin_user']
 
     def update(self, instance, validated_data):
         user = self.context['request'].user  # Récupère l'utilisateur à partir du contexte de la requête
@@ -24,7 +24,7 @@ class HouseSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Seul l'administrateur de la maison peut modifier les informations.")
         
         instance.name = validated_data.get('name', instance.name)
-        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.imageName = validated_data.get('imageName', instance.imageName)
         instance.admin_user = validated_data.get('admin_user', instance.admin_user)
         
         instance.save()

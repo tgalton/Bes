@@ -255,7 +255,7 @@ def create_multiple_made_tasks(request):
     
     return Response({"created_tasks_ids": created_tasks}, status=status.HTTP_201_CREATED)
 
-# Retourne une liste de noms et d'avatars si l'utilisateur connecté partage une house avec les userid transmis
+# Retourne une liste de noms et d'imageNames si l'utilisateur connecté partage une house avec les userid transmis
 @permission_classes([IsAuthenticated])
 class HouseViewSet(viewsets.ModelViewSet):
     queryset = House.objects.all()
