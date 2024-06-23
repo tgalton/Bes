@@ -1,3 +1,52 @@
-<p>
-  hearth-edit-modale works!
-</p>
+<ion-content padding="20px" class="modal-class">
+  <ion-title>Administrateur du foyer</ion-title>
+  <form *ngIf="hearthForm" [formGroup]="hearthForm">
+    <ion-list>
+      <ion-item>
+        <ion-label position="floating">Nom du Hearth</ion-label>
+        <ion-input type="text" formControlName="name"></ion-input>
+      </ion-item>
+
+      <!-- Changement de l'administrateur -->
+      <ion-item>
+        <ion-label position="floating">Administrateur du foyer</ion-label>
+        <ion-select formControlName="adminId">
+          <ion-select-option *ngFor="let user of hearth.hearthUsers" [value]="user.id">
+            {{ user.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <ion-button class="modalButton" expand="block" (click)="updateHearth(hearthForm.value)"
+      color="primary">Sauvegarder</ion-button>
+  </form>
+
+  <!-- Liste des membres du foyer -->
+  <ion-title>Utilisateurs Du Foyer</ion-title>
+
+  <ion-list *ngIf="hearth.hearthUsers">
+    <ion-item *ngFor="let user of hearth.hearthUsers">
+      {{ user.name }}
+      <ion-button slot="end" (click)="removeUser(user.id)">Supprimer</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <!-- Changment d'image d'icone -->
+  <ion-title>Choisir un icône</ion-title>
+
+  <ion-list mode="md" *ngIf="hearthImages.length > 0; else loading" class="avatar-list">
+    <ion-item *ngFor="let hearthImage of hearthImages">
+      <ion-avatar slot="start" (click)="changeHearthImage(hearthImage)">
+        <img [src]="'./../../../' + hearthImage.path">
+      </ion-avatar>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #loading>
+    <ion-item>
+      <ion-label>Loading...</ion-label>
+    </ion-item>
+  </ng-template>
+
+</ion-content>

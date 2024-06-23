@@ -10,10 +10,25 @@ class UserHouseDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'avatar']
 
 class HouseSerializer(serializers.ModelSerializer):
-    users = UserHouseDetailSerializer(many=True, read_only=True)
+    users = UserHouseDetailSerializer(many=True, required=False)
+
     class Meta:
         model = House
-        fields = ['id', 'name', 'users', 'avatar']
+        fields = ['id', 'name', 'users', 'avatar', 'admin_user']
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user  # Récupère l'utilisateur à partir du contexte de la requête
+        
+        # Vérifie si l'utilisateur est l'administrateur de la maison
+        if instance.admin_user != user:
+            raise serializers.ValidationError("Seul l'administrateur de la maison peut modifier les informations.")
+        
+        instance.name = validated_data.get('name', instance.name)
+        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.admin_user = validated_data.get('admin_user', instance.admin_user)
+        
+        instance.save()
+        return instance
 
 
 class HouseworkPossibleTaskSerializer(serializers.ModelSerializer):

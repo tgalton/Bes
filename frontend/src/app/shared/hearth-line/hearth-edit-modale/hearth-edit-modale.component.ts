@@ -1,7 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { Hearth } from 'src/app/models/hearth';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { HearthService } from 'src/app/services/hearth.service';
 
@@ -10,13 +23,16 @@ import { HearthService } from 'src/app/services/hearth.service';
   templateUrl: './hearth-edit-modale.component.html',
   styleUrls: ['./hearth-edit-modale.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule, ReactiveFormsModule],
 })
 export class HearthEditModaleComponent implements OnInit, OnDestroy {
+  @Input() hearth!: Hearth;
+  hearthForm!: FormGroup;
   hearthImages: any[] = [];
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private formBuilder: FormBuilder,
     private avatarService: AvatarService,
     private cd: ChangeDetectorRef,
     private hearthService: HearthService
@@ -27,27 +43,62 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.avatarService.getAllAvatars().subscribe({
+    this.avatarService.getAllHearthImage().subscribe({
       next: (hearthsImages) => {
         this.hearthImages = hearthsImages;
         this.cd.detectChanges(); // Force Angular to recognize the update
       },
       error: (error) => {
-        console.error('Failed to load avatars:', error);
+        console.error('Failed to load HearthImage:', error);
       },
+    });
+
+    this.initializeForm();
+  }
+
+  updateHearth(updates: Partial<Hearth>) {
+    if (this.hearthForm.valid) {
+      const hearthId = this.hearth.id;
+      this.hearthService.updateHearthDetails(hearthId, updates).subscribe({
+        next: (updatedHearth) => {
+          console.log('Hearth updated!', updatedHearth);
+        },
+        error: (error) => {
+          console.error('Failed to update hearth', error);
+        },
+      });
+    }
+  }
+
+  initializeForm() {
+    this.hearthForm = this.formBuilder.group({
+      name: [this.hearth.name || '', Validators.required],
+      adminId: [
+        this.hearth.adminId ||
+          (this.hearth.hearthUsers && this.hearth.hearthUsers.length > 0
+            ? this.hearth.hearthUsers[0].id
+            : ''),
+        Validators.required,
+      ],
     });
   }
 
-  updateHearth() {
-    const hearthId = 1; // Obtenez l'ID d'un moyen quelconque, comme un paramètre de route
-    const updates = { name: 'New Hearth Name', adminId: 2 };
-    this.hearthService.updateHearthDetails(hearthId, updates).subscribe({
-      next: (updatedHearth) => {
-        console.log('Hearth updated!', updatedHearth);
-      },
-      error: (error) => {
-        console.error('Failed to update hearth', error);
-      },
-    });
+  removeUser(userId: number) {
+    // Code pour retirer un utilisateur d'un Hearth
+    const updatedUsers = this.hearth.hearthUsers.filter(
+      (hearthUser) => hearthUser.id !== userId
+    );
+    this.hearthService
+      .updateHearthDetails(this.hearth.id, { hearthUsers: updatedUsers })
+      .subscribe({
+        next: (updatedHearth) => {
+          console.log('User removed', updatedHearth);
+          // Update local state or trigger some behavior
+        },
+        error: (error) => console.error('Failed to remove user', error),
+      });
   }
+
+  changeHearthImage(hearthImage: any) {}
+  private loadHearthImages() {}
 }

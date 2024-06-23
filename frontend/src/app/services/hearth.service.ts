@@ -67,7 +67,7 @@ export class HearthService {
     updates: Partial<Hearth>
   ): Observable<Hearth> {
     return this.http
-      .patch<Hearth>(`${this.apiUrl}/api/houses/${hearthId}`, updates)
+      .put<Hearth>(`${this.apiUrl}/api/house/${hearthId}/`, updates)
       .pipe(
         tap((updatedHearth) => {
           this.store.dispatch(

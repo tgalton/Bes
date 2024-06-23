@@ -1,25 +1,19 @@
 
-
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .models import House, HouseInvitation, HouseworkMadeTask, HouseworkPossibleTask
-from .serializers import HouseSerializer, HouseworkMadeTaskDateRangeSerializer, HouseworkPossibleTaskSerializer, HouseworkMadeTaskSerializer, HistorySerializer
+from .serializers import HouseSerializer, HouseworkMadeTaskDateRangeSerializer, HouseworkPossibleTaskSerializer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import views
 from rest_framework import viewsets
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from django.utils import timezone
-from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 
 
@@ -32,128 +26,119 @@ from django.utils.dateparse import parse_datetime
 # ou 
 # from django.contrib.auth import views as auth_views
 # path("accounts/login/", auth_views.LoginView.as_view()),
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])  # Assurez-vous que seuls les utilisateurs authentifiés peuvent y accéder
-def house_list(request):
+class HouseList(APIView):
     """
-    List all houses for the authenticated user, or create a new house.
+    List all houses of a user or create a new house.
     """
-    # Pour récupérer l'ensemble des maisons d'un utilisateur
-    if request.method == 'GET':
-        # Un utilisateur ne peut voir que ses propres maisons
+    @permission_classes([IsAuthenticated])
+    def get(self, request):
         houses = House.objects.filter(users__id=request.user.id).all()
         serializer = HouseSerializer(houses, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = HouseSerializer(data=data)
+    @permission_classes([IsAuthenticated])
+    def post(self, request):
+        serializer = HouseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-@login_required
-@csrf_exempt
-def house_detail(request, pk=None):
-    """
-    Retrieve, update, delete, or create a house.
-    """
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = HouseSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
 
-    if pk is not None:
+class HouseDetail(APIView):
+    """
+    Retrieve, update, or delete a house.
+    """
+    @permission_classes([IsAuthenticated])
+    def get(self, request, pk):
         try:
             house = House.objects.get(pk=pk)
         except House.DoesNotExist:
-            return HttpResponse(status=404)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = HouseSerializer(house)
+        return Response(serializer.data)
 
-        if request.method == 'GET':
-            serializer = HouseSerializer(house)
-            return JsonResponse(serializer.data)
+    @permission_classes([IsAuthenticated])
+    def put(self, request, pk):
+        try:
+            house = House.objects.get(pk=pk)
+        except House.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        elif request.method == 'PUT':
-            data = JSONParser().parse(request)
-            serializer = HouseSerializer(house, data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse(serializer.data)
-            return JsonResponse(serializer.errors, status=400)
+        # Utilisez "partial=True" pour permettre la mise à jour partielle
+        serializer = HouseSerializer(house, data=request.data, partial=True, context={'request': request})
 
-        elif request.method == 'DELETE':
-            house.delete()
-            return HttpResponse(status=204)
-    else:
-        # Additional logic can be implemented here if needed (like handling a GET request without a 'pk' to list all houses)
-        return HttpResponse('Method not allowed', status=405)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @permission_classes([IsAuthenticated])
+    def delete(self, request, pk):
+        try:
+            house = House.objects.get(pk=pk)
+        except House.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        house.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
 # Vue pour récupérer l'ensemble des tâches disponibles dans un foyer
 # dont l'utilisateur doit faire partie
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_possible_tasks(request, house_id):
-    """
-    Retrieve all possible tasks for a given house that the authenticated user is part of.
-    """
-    if not House.objects.filter(id=house_id, users__id=request.user.id).exists():
-        return Response({'error': 'User not part of the house or house does not exist'}, status=status.HTTP_403_FORBIDDEN)
+# Vue pour créer une nouvelle tâche possible dans une maison
+#Vue pour update une tâche possible
+from rest_framework.exceptions import PermissionDenied
 
-    if request.method == 'GET':
-        tasks = HouseworkPossibleTask.objects.filter(house__id=house_id)
+class HouseworkPossibleTaskView(APIView):
+    """
+    API endpoint that allows getting, posting, updating, and deleting possible tasks.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def check_house_membership(self, house_id, user):
+        """Vérifie si l'utilisateur fait partie de la maison donnée."""
+        if not House.objects.filter(id=house_id, users=user).exists():
+            raise PermissionDenied("Vous n'appartenez pas à cette maison.")
+
+    def get(self, request, house_id=None):
+        if house_id:
+            self.check_house_membership(house_id, request.user)
+            tasks = HouseworkPossibleTask.objects.filter(house__id=house_id)
+        else:
+            tasks = HouseworkPossibleTask.objects.all()
+
         serializer = HouseworkPossibleTaskSerializer(tasks, many=True)
         return Response(serializer.data)
 
-
-
-# Vue pour créer une nouvelle tâche possible dans une maison
-@api_view(['POST'])
-# @ensure_csrf_cookie
-@csrf_exempt
-# @method_decorator(csrf_exempt, name='dispatch')
-@permission_classes([IsAuthenticated])
-def add_possible_task(request):
-    # Récupération de l'ID de la maison depuis la requête
-    house_id = request.data.get('house')
-    if not House.objects.filter(id=house_id, users__id=request.user.id).exists():
-        return Response({'error': 'User not part of this house or house does not exist'}, status=status.HTTP_403_FORBIDDEN)
-    
-    serializer = HouseworkPossibleTaskSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-#Vue pour update une tâche possible
-@api_view(['PUT', 'PATCH'])
-@csrf_exempt
-@permission_classes((IsAuthenticated,))
-def update_possible_task(request, task_id):
-    try:
-        task = HouseworkPossibleTask.objects.get(id=task_id)
-    except HouseworkPossibleTask.DoesNotExist:
-        return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
-    
-    # Vérification que l’utilisateur appartient à la maison associée à la tâche
-    if not task.house.users.filter(id=request.user.id).exists():
-        return Response({'error': 'User is not a member of the house associated with this task'}, status=status.HTTP_403_FORBIDDEN)
-
-    if request.method in ['PUT', 'PATCH']:
-        serializer = HouseworkPossibleTaskSerializer(task, data=request.data, partial=(request.method == 'PATCH'))
+    def post(self, request):
+        house_id = request.data.get('house')
+        self.check_house_membership(house_id, request.user)
+        
+        serializer = HouseworkPossibleTaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=404)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, task_id):
+        task = HouseworkPossibleTask.objects.get(id=task_id)
+        self.check_house_membership(task.house_id, request.user)
+
+        serializer = HouseworkPossibleTaskSerializer(task, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, task_id):
+        task = HouseworkPossibleTask.objects.get(id=task_id)
+        self.check_house_membership(task.house_id, request.user)
+
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
         
 # Vue pour créer une invitation dans une house
 # TODO: vérification d'être dans cette house
@@ -272,12 +257,33 @@ def create_multiple_made_tasks(request):
 
 # Retourne une liste de noms et d'avatars si l'utilisateur connecté partage une house avec les userid transmis
 @permission_classes([IsAuthenticated])
-class HouseViewSet(viewsets.ReadOnlyModelViewSet):
-    """ 
-    Affiche les maisons avec les détails des utilisateurs incluant l'avatar et le nom d'utilisateur.
-    """
+class HouseViewSet(viewsets.ModelViewSet):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
+
+    def update(self, request, *args, **kwargs):
+        house = self.get_object()
+        
+        # Vérifiez si l'utilisateur qui fait la requête est l'administrateur de la maison
+        if house.admin_user != request.user:
+            return Response({"message": "Seul l'administrateur peut modifier les informations de la maison."}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Si l'utilisateur est l'administrateur, procédez à la mise à jour
+        serializer = self.serializer_class(house, data=request.data, partial=kwargs.get('partial', False))
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        house = self.get_object()
+
+        # Vérifiez si l'utilisateur qui fait la requête est l'administrateur de la maison
+        if house.admin_user != request.user:
+            return Response({"message": "Seul l'administrateur peut supprimer la maison."}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Si l'utilisateur est l'administrateur, procédez à la suppression
+        house.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

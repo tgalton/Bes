@@ -1,0 +1,83 @@
+ion-content {
+  padding: 20px;
+  ion-title {
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: 20px;
+    font-weight: 700;
+  }
+
+  .modal-class {
+    max-height: 90%;
+    min-height: 10%;
+    overflow: auto; // Permet de scroller si le contenu dépasse la hauteur max
+  }
+
+  .avatar-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+
+    ion-item {
+      flex-basis: calc(33.33% - 10px); // Trois images per ligne
+      min-width: 110px;
+      height: 110px;
+      border: none;
+
+      ion-avatar {
+        width: 100%;
+        height: 100%;
+
+        img {
+          max-width: 100px;
+          max-height: 100px;
+          border-radius: 50%;
+          border: 4px solid black;
+          background-color: white;
+          padding: 10px;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .avatar-list ion-item {
+      flex-basis: calc(50% - 10px); // Deux images per ligne
+    }
+  }
+
+  @media (max-width: 480px) {
+    .avatar-list ion-item {
+      flex-basis: 100%; // Une image per ligne
+    }
+  }
+
+  form {
+    ion-button {
+      margin-top: 15px; // Espacement après le formulaire
+    }
+  }
+}
+
+ng-template#loading {
+  display: flex;
+  justify-content: center;
+  height: 110px; // Garder la même hauteur que les images pour éviter un saut de mise en page
+  align-items: center;
+
+  ion-label {
+    font-size: 16px;
+    color: #888;
+  }
+
+  ion-item {
+    min-height: 110px;
+  }
+
+  .icon-class {
+    height: 110px;
+    width: 110px;
+    line-height: 120px;
+  }
+}

@@ -8,6 +8,7 @@ import { Observable, catchError, map, of, tap } from 'rxjs';
 import { Hearth } from 'src/app/models/hearth';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { HearthService } from 'src/app/services/hearth.service';
+import { HearthEditModaleComponent } from './hearth-edit-modale/hearth-edit-modale.component';
 import { InvitationModalComponent } from './invitation-modal/invitation-modal.component';
 
 @Component({
@@ -45,9 +46,16 @@ export class HearthLineComponent implements OnInit {
     });
   }
 
+  async openEditHeathModal() {
+    const modal = await this.modalCtrl.create({
+      component: HearthEditModaleComponent,
+      componentProps: { hearth: this.hearth! },
+    });
+    await modal.present();
+  }
+
   ngOnInit() {
     this.avatarService.getAllHearthImage().subscribe(() => {
-      // Assurez-vous que les données sont là avant de continuer
       this.loadImages(this.hearth.imageName);
     });
   }
@@ -56,6 +64,7 @@ export class HearthLineComponent implements OnInit {
     this.imagePath$ = this.getImagePath(imageName);
   }
 
+  // TODO: refacto ce code
   getImagePath(imageName: string | undefined): Observable<string> {
     if (!imageName) {
       return of('assets/hearth-images/defaultHouse.png');
