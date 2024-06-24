@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/house/<int:pk>/', views.HouseDetail.as_view()),
     path('api/house/', views.HouseDetail.as_view()),
     path('api/house/<int:house_id>/remove_user/<int:user_id>/', RemoveUserFromHouse.as_view(), name='remove_user_from_house'),
+    path('api/house/create/', HouseViewSet.as_view({'post': 'create'})),
     
     # Requête pour les tâches possible
     path('api/house/<int:house_id>/tasks/', HouseworkPossibleTaskView.as_view()),

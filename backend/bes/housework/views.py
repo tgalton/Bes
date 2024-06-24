@@ -51,8 +51,53 @@ class HouseList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+# ViewSet si  objectif est de fournir une interface API standard pour les opérations CRUD sur House, et bénéficier de l'automatisation offerte par les routeurs de 
+# DRF pour lier les routes aux méthodes du ViewSet.
+class HouseViewSet(viewsets.ViewSet):
+    """
+    A ViewSet for listing, retrieving, creating, and deleting Houses.
+    """
+    permission_classes = [IsAuthenticated]
 
+    def list(self, request):
+        queryset = House.objects.all()
+        serializer = HouseSerializer(queryset, many=True)
+        return Response(serializer.data)
 
+    def retrieve(self, request, pk=None):
+        house = self.get_object()
+        serializer = HouseSerializer(house)
+        return Response(serializer.data)
+
+    def create(self, request):
+        # On crée une nouvelle maison avec les paramètres par défaut
+        default_name = "Nouveau foyer"
+        default_image_name = "defaultHouse"
+        user = request.user
+        house = House.objects.create(
+            name=default_name,
+            admin_user=user,
+            imageName=default_image_name
+        )
+        house.hearthUsers.add(user)  # Ajoute également l'utilisateur comme membre de la maison
+        house.save()
+        serializer = HouseSerializer(house)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, pk=None):
+        house = self.get_object()
+        # Vérifie si l'utilisateur est l'admin de la maison
+        if house.admin_user != request.user:
+            return Response({"message": "Seul l'administrateur peut supprimer la maison."}, status=status.HTTP_403_FORBIDDEN)
+        house.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_object(self):
+        # Cette méthode doit être modifiée pour récupérer l'objet House en fonction du paramètre 'pk'
+        return self.queryset.get(pk=self.kwargs.get('pk'))
+
+# HouseDetail (ou toute autre vue spécifique) pour gérer des exigences qui dépassent l'interface CRUD 
+# standard ou qui nécessitent un traitement ou des réponses API très spécifiques et personnalisées.
 class HouseDetail(APIView):
     """
     Retrieve, update, or delete a house.
@@ -156,7 +201,7 @@ class HouseworkPossibleTaskView(APIView):
 def generate_invitation(request, house_id):
     print("User ID:", request.user.id)  # assurez-vous d’avoir l'ID
     print("House ID:", house_id)  # ID de la maison
-    house = House.objects.filter(id=house_id, users=request.user).first()
+    house = House.objects.filter(id=house_id, hearthUsers=request.user).first()
     print("House:", house)
     if not house:
         return Response({'error': 'House not found or access denied'}, status=status.HTTP_404_NOT_FOUND)
@@ -262,35 +307,7 @@ def create_multiple_made_tasks(request):
     
     return Response({"created_tasks_ids": created_tasks}, status=status.HTTP_201_CREATED)
 
-# Retourne une liste de noms et d'imageNames si l'utilisateur connecté partage une house avec les userid transmis
-@permission_classes([IsAuthenticated])
-class HouseViewSet(viewsets.ModelViewSet):
-    queryset = House.objects.all()
-    serializer_class = HouseSerializer
 
-    def update(self, request, *args, **kwargs):
-        house = self.get_object()
-        
-        # Vérifiez si l'utilisateur qui fait la requête est l'administrateur de la maison
-        if house.admin_user != request.user:
-            return Response({"message": "Seul l'administrateur peut modifier les informations de la maison."}, status=status.HTTP_403_FORBIDDEN)
-        
-        # Si l'utilisateur est l'administrateur, procédez à la mise à jour
-        serializer = self.serializer_class(house, data=request.data, partial=kwargs.get('partial', False))
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def destroy(self, request, *args, **kwargs):
-        house = self.get_object()
-
-        # Vérifiez si l'utilisateur qui fait la requête est l'administrateur de la maison
-        if house.admin_user != request.user:
-            return Response({"message": "Seul l'administrateur peut supprimer la maison."}, status=status.HTTP_403_FORBIDDEN)
-        
-        # Si l'utilisateur est l'administrateur, procédez à la suppression
-        house.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class RemoveUserFromHouse(APIView):
     permission_classes = [IsAuthenticated]

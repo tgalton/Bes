@@ -57,9 +57,9 @@ export class HearthService {
     );
   }
 
-  addHearth(hearth: Hearth): Observable<Hearth> {
-    return this.http.post<Hearth>(`${this.apiUrl}/api/houses/`, hearth);
-  }
+  // addHearth(hearth: Hearth): Observable<Hearth> {
+  //   return this.http.post<Hearth>(`${this.apiUrl}/api/houses/`, hearth);
+  // }
 
   updateHearthDetails(
     hearthId: number,
@@ -80,9 +80,25 @@ export class HearthService {
       );
   }
 
-  // deleteHearth(id: number) {
-  //   return this.http.delete<Hearth>(`${this.apiUrl}/api/houses/`, id);
-  // }
+  // Créer un hearth avec pour admin l'utilisateur réalisant la requête
+  createHearth(): Observable<Hearth> {
+    console.log('création hearth initialisée');
+    return this.http.post<Hearth>(`${this.apiUrl}/api/house/create/`, {}).pipe(
+      tap((newHearth: Hearth) => {
+        // Assurez-vous que l'action addHearth prend en paramètre le nouveau Hearth
+        this.store.dispatch(HearthActions.addHearth({ hearth: newHearth }));
+      })
+    );
+  }
+
+  // Revoir delete endPoint
+  deleteHearth(hearthId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/house/${hearthId}/`).pipe(
+      tap(() => {
+        this.store.dispatch(HearthActions.deleteHearth({ hearthId: hearthId }));
+      })
+    );
+  }
 
   // Créer un token d'invitation pour un Hearth.
   sendHeartInvite(hearthId: string): Observable<any> {

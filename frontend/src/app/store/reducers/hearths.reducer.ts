@@ -22,6 +22,7 @@ export const hearthsReducer = createReducer(
   on(HearthActions.addHearth, (state, { hearth }) => ({
     ...state,
     hearths: [...state.hearths, hearth],
+    loaded: false,
   })),
   on(HearthActions.updateHearth, (state, { hearth }) => ({
     ...state,
@@ -30,6 +31,7 @@ export const hearthsReducer = createReducer(
   on(HearthActions.deleteHearth, (state, { hearthId }) => ({
     ...state,
     hearths: state.hearths.filter((h) => h.id !== hearthId),
+    loaded: false,
   })),
   on(HearthActions.updateHearthDetails, (state, { hearthId, updates }) => ({
     ...state,

@@ -18,6 +18,7 @@ import { homeOutline } from 'ionicons/icons';
 import { Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.state';
 import { Hearth } from 'src/app/models/hearth';
+import { HearthService } from 'src/app/services/hearth.service';
 import { HeaderComponent } from 'src/app/shared/header/header.component';
 import { HearthLineComponent } from 'src/app/shared/hearth-line/hearth-line.component';
 import { selectHearthsLoaded } from 'src/app/store/selectors/hearths.selector';
@@ -48,7 +49,10 @@ export class HearthListComponent implements OnInit, OnDestroy {
   hearthList$: Observable<Hearth[]> = this.store.select(selectHearthsLoaded);
   loading: boolean = true;
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+    private hearthService: HearthService
+  ) {
     addIcons({ homeOutline });
     // this.user$ = this.store.select(selectUser);
   }
@@ -62,5 +66,16 @@ export class HearthListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  addNewHearth(): void {
+    this.hearthService.createHearth().subscribe(
+      (newHearth) => {
+        console.log('Maison créée !', newHearth);
+      },
+      (error) => {
+        console.error('Erreur lors de la création de la maison', error);
+      }
+    );
   }
 }
