@@ -15,12 +15,12 @@ class House(models.Model):
     :param admin_user: The admin user.
     :param imageName: Name of the used imageName.
     :type name: models.CharField
-    :type users: models.ManyToManyField
+    :type hearthUsers: models.ManyToManyField
     :type admin_user: models.ForeignKey
     :type imageName: models.CharField
     """
     name = models.CharField(max_length=200)
-    users = models.ManyToManyField(User)
+    hearthUsers = models.ManyToManyField(User)
     admin_user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='house_admin_set')
     imageName = models.CharField(max_length=200, blank=True, default=None, null=True)
     

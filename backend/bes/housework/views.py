@@ -1,6 +1,8 @@
 
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .models import House, HouseInvitation, HouseworkMadeTask, HouseworkPossibleTask
@@ -15,6 +17,11 @@ from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+
+
+
+
+
 
 
 
@@ -285,5 +292,30 @@ class HouseViewSet(viewsets.ModelViewSet):
         house.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class RemoveUserFromHouse(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, house_id, user_id):
+        # Récupération de la maison par son ID
+        house = get_object_or_404(House, id=house_id)
+
+        # Récupération de l'utilisateur à enlever
+        user_to_remove = get_object_or_404(User, id=user_id)
+
+        # Vérification si l'utilisateur qui fait la requête est l'administrateur de la maison
+        if request.user != house.admin_user:
+            return Response({"message": "Seul l'administrateur peut retirer un utilisateur."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Vérification si l'utilisateur est actuellement membre de la maison
+        if user_to_remove not in house.hearthUsers.all():
+            return Response({"message": "L'utilisateur n'est pas membre de cette maison."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Retrait de l'utilisateur
+        house.hearthUsers.remove(user_to_remove)
+
+        # Sauvegarde des modifications
+        house.save()
+
+        return Response({"message": f"L'utilisateur {user_to_remove.username} a été retiré de {house.name}"}, status=status.HTTP_204_NO_CONTENT)
 
 

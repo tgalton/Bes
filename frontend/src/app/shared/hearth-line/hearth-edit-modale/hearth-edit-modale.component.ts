@@ -12,7 +12,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Hearth } from 'src/app/models/hearth';
 import { AvatarService } from 'src/app/services/avatar.service';
@@ -32,6 +32,7 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private modalCtrl: ModalController,
     private formBuilder: FormBuilder,
     private avatarService: AvatarService,
     private cd: ChangeDetectorRef,
@@ -46,6 +47,7 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
     this.avatarService.getAllHearthImage().subscribe({
       next: (hearthsImages) => {
         this.hearthImages = hearthsImages;
+
         this.cd.detectChanges(); // Force Angular to recognize the update
       },
       error: (error) => {
@@ -62,6 +64,9 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
       this.hearthService.updateHearthDetails(hearthId, updates).subscribe({
         next: (updatedHearth) => {
           console.log('Hearth updated!', updatedHearth);
+          this.modalCtrl.dismiss({
+            dismissed: true,
+          });
         },
         error: (error) => {
           console.error('Failed to update hearth', error);
@@ -90,17 +95,14 @@ export class HearthEditModaleComponent implements OnInit, OnDestroy {
 
   removeUser(userId: number) {
     console.log(userId);
-    // Code pour retirer un utilisateur d'un Hearth
-    const updatedUsers = this.hearth.hearthUsers.filter(
-      (hearthUser) => hearthUser.id !== userId
-    );
-    console.log(updatedUsers);
-    const updatedUsersInHearth: Partial<Hearth> = { hearthUsers: updatedUsers };
     this.hearthService
-      .updateHearthDetails(this.hearth.id, updatedUsersInHearth)
+      .deleteHearthUser(this.hearth.id.toString(), userId.toString())
       .subscribe({
         next: (updatedHearth) => {
           console.log('User removed', updatedHearth);
+          this.modalCtrl.dismiss({
+            dismissed: true,
+          });
           // Update local state or trigger some behavior
         },
         error: (error) => console.error('Failed to remove user', error),

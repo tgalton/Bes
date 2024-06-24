@@ -37,7 +37,7 @@ export class HearthService {
 
   // Crée une instance Hearth à partir d'un objet de données
   private createHearthFromItem(item: any, user: User | null): Hearth {
-    let hearthUsers: HearthUser[] = item.users.map(
+    let hearthUsers: HearthUser[] = item.hearthUsers.map(
       (apiUser: User) =>
         new HearthUser(apiUser.id, apiUser.username, apiUser.avatar) // Crée des instances de HearthUser
     );
@@ -65,6 +65,7 @@ export class HearthService {
     hearthId: number,
     updates: Partial<Hearth>
   ): Observable<Hearth> {
+    console.log(updates);
     return this.http
       .put<Hearth>(`${this.apiUrl}/api/house/${hearthId}/`, updates)
       .pipe(
@@ -91,5 +92,18 @@ export class HearthService {
     );
   }
 
-  deleteHearthUser(hearthUserId: string, hearthId: string) {}
+  deleteHearthUser(hearthId: string, hearthUserId: string) {
+    return this.http
+      .post<string>(
+        `${this.apiUrl}/api/house/${hearthId}/remove_user/${hearthUserId}/`,
+        hearthId
+      )
+      .pipe(
+        tap(() => {
+          this.store.dispatch(
+            HearthActions.deleteHearthUser({ hearthId, hearthUserId })
+          );
+        })
+      );
+  }
 }

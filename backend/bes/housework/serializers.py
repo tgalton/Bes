@@ -10,11 +10,11 @@ class UserHouseDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'avatar']
 
 class HouseSerializer(serializers.ModelSerializer):
-    users = UserHouseDetailSerializer(many=True, required=False)
+    hearthUsers = UserHouseDetailSerializer(many=True, required=False)
 
     class Meta:
         model = House
-        fields = ['id', 'name', 'users', 'imageName', 'admin_user']
+        fields = ['id', 'name', 'hearthUsers', 'imageName', 'admin_user']
 
     def update(self, instance, validated_data):
         user = self.context['request'].user  # Récupère l'utilisateur à partir du contexte de la requête

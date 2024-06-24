@@ -36,5 +36,18 @@ export const hearthsReducer = createReducer(
     hearths: state.hearths.map((hearth) =>
       hearth.id === hearthId ? { ...hearth, ...updates } : hearth
     ),
+  })),
+  on(HearthActions.deleteHearthUser, (state, { hearthId, hearthUserId }) => ({
+    ...state,
+    hearths: state.hearths.map((hearth) =>
+      hearth.id.toString() === hearthId
+        ? {
+            ...hearth,
+            hearthUsers: hearth.hearthUsers.filter(
+              (user) => user.id.toString() !== hearthUserId
+            ),
+          }
+        : hearth
+    ),
   }))
 );

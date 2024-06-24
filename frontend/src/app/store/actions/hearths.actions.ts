@@ -37,3 +37,8 @@ export const updateHearthDetails = createAction(
   '[Hearth List] Update Hearth Details',
   props<{ hearthId: number; updates: Partial<Hearth> }>()
 );
+
+export const deleteHearthUser = createAction(
+  '[Hearth] Delete Hearth User',
+  props<{ hearthId: string; hearthUserId: string }>()
+);

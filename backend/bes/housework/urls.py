@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import  HouseViewSet, HouseworkMadeTaskDateRangeView, HouseworkPossibleTaskView, generate_invitation, accept_invitation
+from .views import  HouseViewSet, HouseworkMadeTaskDateRangeView, HouseworkPossibleTaskView, RemoveUserFromHouse, generate_invitation, accept_invitation
 from django.views.decorators.csrf import csrf_exempt
 
 #Available routes
@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/houses/details/', HouseViewSet.as_view({'get': 'list'})),
     path('api/house/<int:pk>/', views.HouseDetail.as_view()),
     path('api/house/', views.HouseDetail.as_view()),
+    path('api/house/<int:house_id>/remove_user/<int:user_id>/', RemoveUserFromHouse.as_view(), name='remove_user_from_house'),
     
     # Requête pour les tâches possible
     path('api/house/<int:house_id>/tasks/', HouseworkPossibleTaskView.as_view()),
