@@ -1,0 +1,16 @@
+<!-- select-hearth-modal.component.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Sélectionner un foyer</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item class="highlighted" *ngFor="let hearth of hearths" (click)="selectHearth(hearth)">
+      <app-hearth-line [hearth]="hearth" [displayOptions]="false"></app-hearth-line>
+    </ion-item>
+  </ion-list>
+</ion-content>

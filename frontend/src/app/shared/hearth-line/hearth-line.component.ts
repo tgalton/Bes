@@ -20,6 +20,7 @@ import { InvitationModalComponent } from './invitation-modal/invitation-modal.co
 })
 export class HearthLineComponent implements OnInit {
   @Input() hearth!: Hearth;
+  @Input() displayOptions: boolean = true;
   imagePath$!: Observable<string>;
 
   constructor(

@@ -3,7 +3,7 @@ export class Task {
   public name: string;
   public value: number;
   public point: number;
-  public arduousness: number;
+  public difficulty: number;
   public duration: number;
 
   constructor(
@@ -11,14 +11,14 @@ export class Task {
     name: string,
     value: number,
     point: number,
-    arduousness: number,
+    difficulty: number,
     duration: number
   ) {
     this.id = id;
     this.name = name;
     this.value = value;
     this.point = point;
-    this.arduousness = arduousness;
+    this.difficulty = difficulty;
     this.duration = duration;
   }
   // Déclarez des méthodes si nécessaire

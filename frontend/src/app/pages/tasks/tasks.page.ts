@@ -1,25 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
-import {
-  IonButton,
-  IonCol,
-  IonContent,
-  IonDatetime,
-  IonFab,
-  IonFabButton,
-  IonGrid,
-  IonHeader,
-  IonIcon,
-  IonRow,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/angular/standalone';
+import { IonDatetime } from '@ionic/angular/standalone';
 
+import { IonicModule, ModalController } from '@ionic/angular';
 import { HeaderComponent } from '../../shared/header/header.component';
 import { TaskComponent } from './taskComponent/task/task.component';
 
+import { Store } from '@ngrx/store';
+import { addIcons } from 'ionicons';
+import { caretDownOutline } from 'ionicons/icons';
+import { Observable, first, tap } from 'rxjs';
+import { Hearth } from 'src/app/models/hearth';
 import { Task } from 'src/app/models/task';
+import { HearthService } from 'src/app/services/hearth.service';
+import { HearthLineComponent } from 'src/app/shared/hearth-line/hearth-line.component';
+import { selectHearthsLoaded } from 'src/app/store/selectors/hearths.selector';
+import { SelectHearthModalComponent } from './taskComponent/select-hearth-modal/select-hearth-modal.component';
 
 @Component({
   selector: 'app-tasks',
@@ -28,23 +25,14 @@ import { Task } from 'src/app/models/task';
   standalone: true,
   imports: [
     TaskComponent,
-    IonFab,
-    IonButton,
-    IonRow,
-    IonCol,
-    IonGrid,
-    IonIcon,
-    IonFabButton,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     CommonModule,
+    IonicModule,
     FormsModule,
     HeaderComponent,
+    HearthLineComponent,
   ],
 })
-export class TasksPage {
+export class TasksPage implements OnInit {
   listOfTasks: Task[] = [
     new Task(1, 'Vaisselle', 0, 1, 1, 1),
     new Task(2, 'Aspirateur', 0, 1, 1, 1),
@@ -62,19 +50,65 @@ export class TasksPage {
   @ViewChild('dateTime', { static: false }) dateTime!: IonDatetime;
   today = new Date(Date.now());
 
+  hearthList$: Observable<Hearth[]>;
+  selectedHearth!: Hearth;
+
   //Form to edit task
   formEditTask = new FormControl();
   taskId?: number;
-  taskArduousness?: number;
+  taskdifficulty?: number;
   taskDuration?: number;
   taskNewName?: string;
   taskName?: string;
   taskCurrentName?: string;
 
   hiddenCreateTask: boolean = true;
-  newTaskArduousness?: number;
+  newTaskdifficulty?: number;
   newTaskDuration?: number;
   newTaskPoint?: number;
+
+  constructor(
+    private modalCtrl: ModalController,
+    private store: Store,
+    private hearthService: HearthService
+  ) {
+    this.hearthList$ = this.store.select(selectHearthsLoaded);
+    addIcons({ caretDownOutline });
+    // this.user$ = this.store.select(selectUser);
+  }
+
+  ngOnInit() {
+    this.hearthList$
+      .pipe(
+        first(), // Prend le premier tableau de Hearths émis
+        tap((hearths) => {
+          if (hearths && hearths.length > 0) {
+            this.selectedHearth = hearths[0]; // Définir le premier Hearth comme sélection par défaut
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  async openHearthSelectionModal() {
+    // Souscrire à l'Observable et obtenir les données initiales
+    const hearths = await this.hearthList$.pipe(first()).toPromise();
+
+    // Créer le modal en passant les données récupérées
+    const modal = await this.modalCtrl.create({
+      component: SelectHearthModalComponent,
+      componentProps: { hearths: hearths },
+    });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.role === 'select') {
+        this.selectedHearth = data.data;
+        console.log('Selected Hearth:', this.selectedHearth);
+      }
+    });
+
+    return await modal.present();
+  }
 
   updateTask(task: Task) {
     const index = this.listOfTasks.findIndex((t) => t.id === task.id);
@@ -98,18 +132,18 @@ export class TasksPage {
   }
   updateTaskPoint() {
     this.newTaskPoint = this.calculPoint(
-      this.newTaskArduousness,
+      this.newTaskdifficulty,
       this.newTaskDuration
     );
   }
-  // Used to directly put a pointTask from Arduousness and Duration
+  // Used to directly put a pointTask from difficulty and Duration
 
   calculPoint(
-    taskArduousness: number | undefined,
+    taskdifficulty: number | undefined,
     taskDuration: number | undefined
   ): number {
-    if (taskArduousness !== undefined && taskDuration !== undefined) {
-      return Math.floor(taskDuration * (1 + 0.3 * taskArduousness));
+    if (taskdifficulty !== undefined && taskDuration !== undefined) {
+      return Math.floor(taskDuration * (1 + 0.3 * taskdifficulty));
     } else {
       return 1;
     }

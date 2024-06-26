@@ -151,7 +151,7 @@ class HouseworkPossibleTaskView(APIView):
 
     def check_house_membership(self, house_id, user):
         """Vérifie si l'utilisateur fait partie de la maison donnée."""
-        if not House.objects.filter(id=house_id, users=user).exists():
+        if not House.objects.filter(id=house_id, hearthUsers=user).exists():
             raise PermissionDenied("Vous n'appartenez pas à cette maison.")
 
     def get(self, request, house_id=None):

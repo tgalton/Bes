@@ -39,7 +39,7 @@ import { Task } from 'src/app/models/task';
 })
 export class TaskComponent implements OnInit {
   taskId!: number;
-  taskArduousness!: number;
+  taskdifficulty!: number;
   taskDuration!: number;
   taskPoint!: number;
   taskValue!: number;
@@ -47,8 +47,8 @@ export class TaskComponent implements OnInit {
 
   // Use required setters to have differents values for each taskForm.
   // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('arduousness') set TaskArduousness(value: number) {
-    this.taskArduousness = value;
+  @Input('difficulty') set Taskdifficulty(value: number) {
+    this.taskdifficulty = value;
   }
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('duration') set TaskDuration(value: number) {
@@ -95,11 +95,11 @@ export class TaskComponent implements OnInit {
   }
 
   updateTaskPoint() {
-    this.taskPoint = this.calculPoint(this.taskArduousness, this.taskDuration);
+    this.taskPoint = this.calculPoint(this.taskdifficulty, this.taskDuration);
   }
-  // Used to directly put a pointTask from Arduousness and Duration
-  calculPoint(taskArduousness: number, taskDuration: number): number {
-    return Math.floor(taskDuration * (1 + 0.3 * taskArduousness));
+  // Used to directly put a pointTask from difficulty and Duration
+  calculPoint(taskdifficulty: number, taskDuration: number): number {
+    return Math.floor(taskDuration * (1 + 0.3 * taskdifficulty));
   }
 
   submitForm() {
@@ -109,7 +109,7 @@ export class TaskComponent implements OnInit {
       this.taskNewName === '' ? this.taskName : this.taskNewName,
       this.taskValue,
       this.taskPoint,
-      this.taskArduousness,
+      this.taskdifficulty,
       this.taskDuration
     );
 
