@@ -1,22 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
-import { IonDatetime } from '@ionic/angular/standalone';
-
 import { IonicModule, ModalController } from '@ionic/angular';
-import { HeaderComponent } from '../../shared/header/header.component';
-import { TaskComponent } from './taskComponent/task/task.component';
-
+import { IonDatetime } from '@ionic/angular/standalone';
 import { Store } from '@ngrx/store';
 import { addIcons } from 'ionicons';
 import { caretDownOutline } from 'ionicons/icons';
-import { Observable, first, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
+import { filter, first, map, switchMap } from 'rxjs/operators';
 import { Hearth } from 'src/app/models/hearth';
 import { Task } from 'src/app/models/task';
 import { HearthService } from 'src/app/services/hearth.service';
+import { TaskService } from 'src/app/services/task.service';
 import { HearthLineComponent } from 'src/app/shared/hearth-line/hearth-line.component';
+import { loadHearths } from 'src/app/store/actions/hearths.actions';
+import { selectUser } from 'src/app/store/reducers/auth.reducer';
 import { selectHearthsLoaded } from 'src/app/store/selectors/hearths.selector';
+import { HeaderComponent } from '../../shared/header/header.component';
 import { SelectHearthModalComponent } from './taskComponent/select-hearth-modal/select-hearth-modal.component';
+import { TaskComponent } from './taskComponent/task/task.component';
 
 @Component({
   selector: 'app-tasks',
@@ -33,25 +35,14 @@ import { SelectHearthModalComponent } from './taskComponent/select-hearth-modal/
   ],
 })
 export class TasksPage implements OnInit {
-  listOfTasks: Task[] = [
-    new Task(1, 'Vaisselle', 0, 1, 1, 1),
-    new Task(2, 'Aspirateur', 0, 1, 1, 1),
-    new Task(3, 'Balayer', 0, 1, 1, 1),
-    new Task(4, 'Courses', 0, 1, 1, 1),
-    new Task(5, 'Serpillère', 0, 1, 1, 1),
-    new Task(6, 'Poubelle', 0, 1, 1, 1),
-    new Task(7, 'Litière', 0, 1, 1, 1),
-    new Task(8, 'Point bonus', 0, 1, 1, 1),
-    new Task(9, 'Nettoyer truc', 0, 1, 1, 1),
-    new Task(10, 'Chercher bois', 0, 1, 1, 1),
-    new Task(11, 'Ranger Linge', 0, 1, 1, 1),
-  ];
+  listOfTasks: Task[] = [];
+  isLoading = true; // flag de chargement
 
   @ViewChild('dateTime', { static: false }) dateTime!: IonDatetime;
   today = new Date(Date.now());
 
   hearthList$: Observable<Hearth[]>;
-  selectedHearth!: Hearth;
+  selectedHearth$ = new BehaviorSubject<Hearth | null>(null);
 
   //Form to edit task
   formEditTask = new FormControl();
@@ -66,35 +57,58 @@ export class TasksPage implements OnInit {
   newTaskdifficulty?: number;
   newTaskDuration?: number;
   newTaskPoint?: number;
+  private subscription: Subscription = new Subscription();
 
+  userId$: Observable<number | undefined> = this.store
+    .select(selectUser)
+    .pipe(map((user) => user?.id));
   constructor(
     private modalCtrl: ModalController,
     private store: Store,
-    private hearthService: HearthService
+    private hearthService: HearthService,
+    private taskService: TaskService
   ) {
     this.hearthList$ = this.store.select(selectHearthsLoaded);
     addIcons({ caretDownOutline });
-    // this.user$ = this.store.select(selectUser);
   }
 
   ngOnInit() {
-    this.hearthList$
+    this.userId$
       .pipe(
-        first(), // Prend le premier tableau de Hearths émis
-        tap((hearths) => {
-          if (hearths && hearths.length > 0) {
-            this.selectedHearth = hearths[0]; // Définir le premier Hearth comme sélection par défaut
+        filter((userId) => userId !== undefined),
+        switchMap((userId) => {
+          this.isLoading = true;
+          this.store.dispatch(loadHearths({ userId: userId! }));
+          return this.store.select(selectHearthsLoaded);
+        }),
+        switchMap((hearths) => {
+          if (hearths.length > 0) {
+            this.selectedHearth$.next(hearths[0]);
+            return this.taskService.getAllPossibleTasks(hearths[0].id);
+          } else {
+            return of([]);
           }
         })
       )
-      .subscribe();
+      .subscribe(
+        (tasks) => {
+          this.listOfTasks = tasks;
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error loading tasks:', error);
+          this.isLoading = false;
+        }
+      );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   async openHearthSelectionModal() {
-    // Souscrire à l'Observable et obtenir les données initiales
     const hearths = await this.hearthList$.pipe(first()).toPromise();
 
-    // Créer le modal en passant les données récupérées
     const modal = await this.modalCtrl.create({
       component: SelectHearthModalComponent,
       componentProps: { hearths: hearths },
@@ -102,8 +116,15 @@ export class TasksPage implements OnInit {
 
     modal.onDidDismiss().then((data) => {
       if (data.role === 'select') {
-        this.selectedHearth = data.data;
-        console.log('Selected Hearth:', this.selectedHearth);
+        this.selectedHearth$.next(data.data);
+        console.log('Selected Hearth by modal:', data.data);
+        this.isLoading = true; // Début du chargement
+        this.taskService
+          .getAllPossibleTasks(data.data.id)
+          .subscribe((tasks) => {
+            this.listOfTasks = tasks;
+            this.isLoading = false; // Fin du chargement
+          });
       }
     });
 
@@ -121,22 +142,21 @@ export class TasksPage implements OnInit {
 
   editTask(task: Task) {}
 
-  // Toggle button
   onClickButtonCreate() {
     this.hiddenCreateTask = !this.hiddenCreateTask;
   }
-  // Used to clear datePicker -> current date
+
   onClearButtonClicked() {
     this.dateTime.value = this.today.toISOString();
     this.dateTime.reset();
   }
+
   updateTaskPoint() {
     this.newTaskPoint = this.calculPoint(
       this.newTaskdifficulty,
       this.newTaskDuration
     );
   }
-  // Used to directly put a pointTask from difficulty and Duration
 
   calculPoint(
     taskdifficulty: number | undefined,
@@ -148,6 +168,7 @@ export class TasksPage implements OnInit {
       return 1;
     }
   }
+
   onOkayButtonClicked() {}
 
   testType(task: Task) {}

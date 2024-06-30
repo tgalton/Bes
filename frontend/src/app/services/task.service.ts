@@ -12,8 +12,8 @@ export class TaskService {
   constructor(private http: HttpClient, private store: Store) {}
 
   // Méthode pour récupérer toutes les tâches possibles d'un foyer
-  getAllPossibleTasks(houseId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/api/house/${houseId}/tasks/`);
+  getAllPossibleTasks(hearthId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/api/house/${hearthId}/tasks/`);
   }
 
   // Méthode pour ajouter une tâche possible
