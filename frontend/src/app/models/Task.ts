@@ -21,5 +21,4 @@ export class Task {
     this.difficulty = difficulty;
     this.duration = duration;
   }
-  // Déclarez des méthodes si nécessaire
 }

@@ -282,7 +282,7 @@ def create_multiple_made_tasks(request):
             possible_task = HouseworkPossibleTask.objects.get(id=possible_task_id)
             
             # Vérifie que l'utilisateur est bien membre de la maison
-            if not possible_task.house.users.filter(id=request.user.id).exists():
+            if not possible_task.house.hearthUsers.filter(id=request.user.id).exists():
                 errors.append({"possible_task_id": possible_task_id, "error": "User is not a member of the house"})
                 continue
 

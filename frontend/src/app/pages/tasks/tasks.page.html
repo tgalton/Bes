@@ -1,4 +1,4 @@
-<app-header></app-header>
+<!-- tasks.component.html -->
 <ion-content [fullscreen]="true">
   <div class="contener">
     <ion-header collapse="condense">
@@ -8,7 +8,6 @@
     </ion-header>
 
     <ng-container *ngIf="!isLoading; else loading">
-      <!-- Bouton pour changer de foyer -->
       <ion-item button (click)="openHearthSelectionModal()">
         <ng-container *ngIf="(selectedHearth$ | async) as selectedHearth">
           <app-hearth-line [hearth]="selectedHearth" [displayOptions]="false"></app-hearth-line>
@@ -18,8 +17,8 @@
 
       <ion-grid [fixed]="true" class="ion-grid">
         <ng-container *ngFor="let task of listOfTasks">
-          <app-task [id]="task.id" [difficulty]="task.difficulty" [duration]="task.duration" [point]="task.point"
-            [value]="task.value" [name]="task.name" (taskSubmitted)="updateTask($event)"></app-task>
+          <app-task [task]="task" [count]="taskCountsToday[task.id] || 0"
+            (taskUpdated)="updateTaskCount($event)"></app-task>
         </ng-container>
       </ion-grid>
 
@@ -44,7 +43,6 @@
         </div>
         <div
           [ngStyle]="{'border': hiddenCreateTask === false ? '0.05em solid white' : 'none', 'margin': '1em', 'width': '80%', 'max-width': '500px'}">
-          <!-- Create task (time and difficulty), hidden without creation -->
           <ion-row class="createTaskRow">
             <ion-col size="5"><ion-input label="Nommer la nouvelle tâche" label-placement="floating" fill="outline"
                 maxlength="20" placeholder="Entrer nouveau nom" [(ngModel)]="taskNewName"
@@ -53,24 +51,20 @@
           </ion-row>
           <ion-row class="createTaskRow">
             <ion-col size="6">
-              <!-- Difficulty (difficulty) -->
               <ion-range aria-label="Chiantisse" label="Chiantise" [(ngModel)]="newTaskdifficulty" name="taskdifficulty"
                 (ionChange)="updateTaskPoint()"></ion-range>
             </ion-col>
           </ion-row>
           <ion-row class="createTaskRow">
             <ion-col size="6">
-              <!-- Time (duration) -->
               <ion-range aria-label="Temps" label="Temps passé" [(ngModel)]="newTaskDuration" name="taskDuration"
                 (ionChange)="updateTaskPoint()"></ion-range>
             </ion-col>
           </ion-row>
-          <!-- Line three, to edit task (name, pt, validation ), hidden without edition -->
           <ion-row>
             <ion-col size="1"><ion-button size="1" color="primary">{{newTaskPoint}}</ion-button></ion-col>
             <ion-col size="1">
               <ion-button color="primary" type="submit">
-                <!-- <ion-icon slot="start" name="checkmark"></ion-icon> -->
               </ion-button>
             </ion-col>
           </ion-row>

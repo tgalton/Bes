@@ -22,7 +22,7 @@ export class TaskService {
   }
 
   // Méthode pour modifier une tâche possible
-  updatePossibleTask(taskId: number, task: Task): Observable<Task> {
+  updatePossibleTask(taskId: number, task: Partial<Task>): Observable<Task> {
     return this.http.put<Task>(
       `${this.apiUrl}api/tasks/possible/${taskId}`,
       task
@@ -36,14 +36,36 @@ export class TaskService {
     endDate: string
   ): Observable<Task[]> {
     return this.http.get<Task[]>(
-      `${this.apiUrl}/made-tasks/${houseId}?start=${startDate}&end=${endDate}`
+      `${this.apiUrl}/api/tasks/made/date-range/?start_date=${startDate}&end_date=${endDate}&house_id=${houseId}`
     );
   }
 
+  getMadeTasksToday(houseId: number): Observable<Task[]> {
+    const today = new Date().toISOString().split('T')[0];
+    const startDate = `${today}T00:00:00Z`;
+    const endDate = `${today}T23:59:59Z`;
+    console.log(
+      'input for getMadeTasksByDateRange : ',
+      houseId,
+      startDate,
+      endDate
+    );
+    const tasksMadeToday = this.getMadeTasksByDateRange(
+      houseId,
+      startDate,
+      endDate
+    );
+    console.log(tasksMadeToday);
+    return tasksMadeToday;
+  }
+
   // Méthode pour ajouter plusieurs tâches réalisées
-  addMultipleMadeTasks(tasks: Task[]): Observable<any> {
+  addMultipleMadeTasks(
+    tasks: { possible_task_id: number; count: number }[]
+  ): Observable<any> {
+    console.log('Adding these tasks:', tasks);
     return this.http.post<any>(
-      `${this.apiUrl}api/tasks/made/create-multiple/`,
+      `${this.apiUrl}/api/tasks/made/create-multiple/`,
       tasks
     );
   }

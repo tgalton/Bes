@@ -1,19 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  IonButton,
-  IonCol,
-  IonContent,
-  IonFab,
-  IonFabButton,
-  IonGrid,
-  IonHeader,
-  IonIcon,
-  IonRow,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
+
+import { Store } from '@ngrx/store';
+import { addIcons } from 'ionicons';
+import { caretDownSharp, checkmarkOutline } from 'ionicons/icons';
 import { Task } from 'src/app/models/task';
 
 @Component({
@@ -21,62 +13,20 @@ import { Task } from 'src/app/models/task';
   templateUrl: 'task.component.html',
   styleUrls: ['task.component.scss'],
   standalone: true,
-  imports: [
-    IonFab,
-    IonButton,
-    IonRow,
-    IonCol,
-    IonGrid,
-    IonIcon,
-    IonFabButton,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    CommonModule,
-    FormsModule,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule],
 })
-export class TaskComponent implements OnInit {
-  taskId!: number;
-  taskdifficulty!: number;
-  taskDuration!: number;
-  taskPoint!: number;
-  taskValue!: number;
-  taskName!: string;
-
-  // Use required setters to have differents values for each taskForm.
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('difficulty') set Taskdifficulty(value: number) {
-    this.taskdifficulty = value;
-  }
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('duration') set TaskDuration(value: number) {
-    this.taskDuration = value;
-  }
-
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('point') set TaskPoint(value: number) {
-    this.taskPoint = value;
-  }
-
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('value') set TaskValue(value: number) {
-    this.taskValue = value;
-  }
-
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('name') set TaskName(value: string) {
-    this.taskName = value;
-  }
-
-  @Output() taskSubmitted: EventEmitter<Task> = new EventEmitter<Task>();
+export class TaskComponent {
+  @Input() task!: Task;
+  @Input() count!: number;
+  @Output() taskUpdated: EventEmitter<{ taskId: number; count: number }> =
+    new EventEmitter();
 
   hidden: boolean = true;
   taskNewName: string = '';
+  fibonacciValues: number[] = [0, 1, 2, 3, 5, 8, 13, 21];
 
-  ngOnInit() {
-    this.updateTaskPoint();
+  constructor(private store: Store) {
+    addIcons({ checkmarkOutline, caretDownSharp });
   }
 
   openEditTask() {
@@ -86,33 +36,22 @@ export class TaskComponent implements OnInit {
 
   // Used for button "+" & "-"
   incrementTaskValueOnClick(): void {
-    this.taskValue = this.taskValue + 1;
+    this.count += 1;
+    console.log(`Task ${this.task.id} incremented to ${this.count}`);
+    this.taskUpdated.emit({ taskId: this.task.id, count: this.count });
   }
+
   decrementTaskValueOnClick(): void {
-    if (this.taskValue > 0) {
-      this.taskValue = this.taskValue - 1;
+    if (this.count > 0) {
+      this.count -= 1;
+      console.log(`Task ${this.task.id} decremented to ${this.count}`);
+      this.taskUpdated.emit({ taskId: this.task.id, count: this.count });
     }
   }
 
-  updateTaskPoint() {
-    this.taskPoint = this.calculPoint(this.taskdifficulty, this.taskDuration);
-  }
-  // Used to directly put a pointTask from difficulty and Duration
-  calculPoint(taskdifficulty: number, taskDuration: number): number {
-    return Math.floor(taskDuration * (1 + 0.3 * taskdifficulty));
-  }
+  submitForm() {}
 
-  submitForm() {
-    const task: Task = new Task(
-      // Opérateur de coalescence nulle : si nulle ou false alors on prend l'autre.
-      this.taskId,
-      this.taskNewName === '' ? this.taskName : this.taskNewName,
-      this.taskValue,
-      this.taskPoint,
-      this.taskdifficulty,
-      this.taskDuration
-    );
-
-    this.taskSubmitted.emit(task);
+  onDifficultyChange(event: any): void {
+    this.task.difficulty = event.detail.value;
   }
 }

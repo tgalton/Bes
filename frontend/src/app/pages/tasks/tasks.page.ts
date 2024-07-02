@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { addIcons } from 'ionicons';
 import { caretDownOutline } from 'ionicons/icons';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
-import { filter, first, map, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, first, map, switchMap } from 'rxjs/operators';
 import { Hearth } from 'src/app/models/hearth';
 import { Task } from 'src/app/models/task';
 import { HearthService } from 'src/app/services/hearth.service';
@@ -36,6 +36,7 @@ import { TaskComponent } from './taskComponent/task/task.component';
 })
 export class TasksPage implements OnInit {
   listOfTasks: Task[] = [];
+  taskCountsToday: { [taskId: number]: number } = {};
   isLoading = true; // flag de chargement
 
   @ViewChild('dateTime', { static: false }) dateTime!: IonDatetime;
@@ -44,24 +45,23 @@ export class TasksPage implements OnInit {
   hearthList$: Observable<Hearth[]>;
   selectedHearth$ = new BehaviorSubject<Hearth | null>(null);
 
+  hiddenCreateTask: boolean = true;
+
   //Form to edit task
   formEditTask = new FormControl();
-  taskId?: number;
-  taskdifficulty?: number;
-  taskDuration?: number;
-  taskNewName?: string;
-  taskName?: string;
-  taskCurrentName?: string;
-
-  hiddenCreateTask: boolean = true;
   newTaskdifficulty?: number;
   newTaskDuration?: number;
   newTaskPoint?: number;
+  taskNewName?: string;
   private subscription: Subscription = new Subscription();
 
+  // Récupère l'id pour avoir la liste des hearths plus tard
   userId$: Observable<number | undefined> = this.store
     .select(selectUser)
     .pipe(map((user) => user?.id));
+
+  private updateSubject = new BehaviorSubject<void>(undefined);
+
   constructor(
     private modalCtrl: ModalController,
     private store: Store,
@@ -93,6 +93,7 @@ export class TasksPage implements OnInit {
       .subscribe(
         (tasks) => {
           this.listOfTasks = tasks;
+          this.updateTasksCountToday(); // Mise à jour des tâches réalisées aujourd'hui
           this.isLoading = false;
         },
         (error) => {
@@ -100,6 +101,15 @@ export class TasksPage implements OnInit {
           this.isLoading = false;
         }
       );
+
+    this.updateSubject.pipe(debounceTime(2000)).subscribe(() => {
+      this.submitTaskCount();
+    });
+
+    // Mise à jour des tâches réalisées aujourd'hui lorsqu'un foyer est sélectionné
+    this.selectedHearth$.subscribe(() => {
+      this.updateTasksCountToday();
+    });
   }
 
   ngOnDestroy() {
@@ -131,13 +141,40 @@ export class TasksPage implements OnInit {
     return await modal.present();
   }
 
-  updateTask(task: Task) {
-    const index = this.listOfTasks.findIndex((t) => t.id === task.id);
-    if (index !== -1) {
-      this.listOfTasks[index] = task;
+  updateTaskCount(event: { taskId: number; count: number }) {
+    console.log(`Updating task ${event.taskId} with new value ${event.count}`);
+    const task = this.listOfTasks.find((t) => t.id === event.taskId);
+    if (task) {
+      task.value = +event.count;
     }
-    console.log(task);
-    console.log(this.listOfTasks);
+    this.updateSubject.next();
+  }
+
+  submitTaskCount() {
+    const tasksToUpdate = this.listOfTasks
+      .filter((task) => task.value > 0)
+      .flatMap((task) => {
+        const countDifference =
+          task.value - (this.taskCountsToday[task.id] || 0);
+        return Array(Math.abs(countDifference)).fill({
+          possible_task_id: task.id,
+          count: Math.sign(countDifference),
+        });
+      });
+
+    console.log('Tasks to update: ', tasksToUpdate);
+
+    if (tasksToUpdate.length > 0) {
+      this.taskService.addMultipleMadeTasks(tasksToUpdate).subscribe(
+        () => {
+          console.log('Tasks updated successfully');
+          this.updateTasksCountToday(); // Mise à jour après soumission
+        },
+        (error) => {
+          console.error('Error updating tasks:', error);
+        }
+      );
+    }
   }
 
   editTask(task: Task) {}
@@ -146,30 +183,20 @@ export class TasksPage implements OnInit {
     this.hiddenCreateTask = !this.hiddenCreateTask;
   }
 
-  onClearButtonClicked() {
-    this.dateTime.value = this.today.toISOString();
-    this.dateTime.reset();
-  }
+  updateTaskPoint() {}
 
-  updateTaskPoint() {
-    this.newTaskPoint = this.calculPoint(
-      this.newTaskdifficulty,
-      this.newTaskDuration
-    );
-  }
-
-  calculPoint(
-    taskdifficulty: number | undefined,
-    taskDuration: number | undefined
-  ): number {
-    if (taskdifficulty !== undefined && taskDuration !== undefined) {
-      return Math.floor(taskDuration * (1 + 0.3 * taskdifficulty));
-    } else {
-      return 1;
+  updateTasksCountToday() {
+    const selectedHearth = this.selectedHearth$.getValue();
+    if (selectedHearth) {
+      this.taskService
+        .getMadeTasksToday(selectedHearth.id)
+        .subscribe((tasks) => {
+          const counts: { [taskId: number]: number } = {};
+          tasks.forEach((task) => {
+            counts[task.id] = (counts[task.id] || 0) + 1;
+          });
+          this.taskCountsToday = counts;
+        });
     }
   }
-
-  onOkayButtonClicked() {}
-
-  testType(task: Task) {}
 }
