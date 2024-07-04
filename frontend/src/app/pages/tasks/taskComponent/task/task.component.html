@@ -1,7 +1,7 @@
 <form (submit)="submitForm()">
   <div [ngStyle]="{'border': hidden === false ? '0.05em solid white' : 'none', 'margin': '0em'}">
-    <!-- Three lines for each taks -->
-    <!-- Line one, used to register the dealy tasks -->
+    <!-- Three lines for each task -->
+    <!-- Line one, used to register the delay tasks -->
     <ion-row>
       <ion-col size="3"><ion-button expand="block" color="primary" class="custom-button"
           (click)="openEditTask()">{{task.name}}

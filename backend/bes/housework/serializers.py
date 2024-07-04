@@ -56,13 +56,15 @@ class HouseworkPossibleTaskSerializer(serializers.ModelSerializer):
 class HouseworkMadeTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseworkMadeTask
-        fields = ['id', 'name', 'score', 'date', 'duration', 'difficulty', 'user', 'house']
+        fields = ['id', 'name', 'score', 'date', 'duration', 'difficulty', 'user', 'house', 'possible_task']
 
-# Warning : Doublon ?!
+
+# Warning : Enlever des informations non nécessaire au front ?
 class HouseworkMadeTaskDateRangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseworkMadeTask
-        fields = ['id', 'name', 'score', 'date', 'duration', 'difficulty', 'user', 'house']
+        fields = ['id', 'name', 'score', 'date', 'duration', 'difficulty', 'user', 'house', 'possible_task']
+
 
 # Serialiseur d'ajout de tâches réalisées
 

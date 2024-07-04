@@ -185,15 +185,22 @@ export class TasksPage implements OnInit {
 
   updateTaskPoint() {}
 
-  updateTasksCountToday() {
+  async updateTasksCountToday() {
     const selectedHearth = this.selectedHearth$.getValue();
-    if (selectedHearth) {
+    const userId = await this.userId$.pipe(first()).toPromise(); // Récupère l'ID de l'utilisateur connecté
+
+    if (selectedHearth && userId) {
       this.taskService
         .getMadeTasksToday(selectedHearth.id)
         .subscribe((tasks) => {
           const counts: { [taskId: number]: number } = {};
           tasks.forEach((task) => {
-            counts[task.id] = (counts[task.id] || 0) + 1;
+            // Vérifie que la tâche a été faite par l'utilisateur connecté
+            if (task.user === userId) {
+              // Utilise possible_task pour le comptage
+              counts[task.possible_task] =
+                (counts[task.possible_task] || 0) + 1;
+            }
           });
           this.taskCountsToday = counts;
         });

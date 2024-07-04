@@ -109,6 +109,7 @@ class HouseworkMadeTask(models.Model):
     difficulty = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     house = models.ForeignKey(House, on_delete=models.CASCADE)
+    possible_task = models.ForeignKey(HouseworkPossibleTask, on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return self.name

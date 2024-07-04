@@ -5,6 +5,8 @@ export class Task {
   public point: number;
   public difficulty: number;
   public duration: number;
+  public user!: number;
+  public possible_task!: number;
 
   constructor(
     id: number,
@@ -12,7 +14,9 @@ export class Task {
     value: number,
     point: number,
     difficulty: number,
-    duration: number
+    duration: number,
+    user: number,
+    possible_task: number
   ) {
     this.id = id;
     this.name = name;
@@ -20,5 +24,7 @@ export class Task {
     this.point = point;
     this.difficulty = difficulty;
     this.duration = duration;
+    this.user = user;
+    this.possible_task = possible_task;
   }
 }

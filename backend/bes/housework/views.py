@@ -271,14 +271,17 @@ def create_multiple_made_tasks(request):
     # Extrait les données de la requête
     task_list = request.data
 
+    # Listes pour stocker les tâches créées et les erreurs
     created_tasks = []
     errors = []
 
     for task in task_list:
+        # Récupère l'ID de la tâche possible et le nombre de fois que la tâche a été effectuée
         possible_task_id = task.get('possible_task_id')
         count = task.get('count')
 
         try:
+            # Récupère la tâche possible à partir de son ID
             possible_task = HouseworkPossibleTask.objects.get(id=possible_task_id)
             
             # Vérifie que l'utilisateur est bien membre de la maison
@@ -286,27 +289,31 @@ def create_multiple_made_tasks(request):
                 errors.append({"possible_task_id": possible_task_id, "error": "User is not a member of the house"})
                 continue
 
-            # Crée les tâches réalisées
+            # Crée les tâches réalisées en fonction du nombre spécifié
             for _ in range(count):
                 made_task = HouseworkMadeTask.objects.create(
-                    name=possible_task.name,
-                    date=timezone.now(),
-                    duration=possible_task.duration,
-                    difficulty=possible_task.difficulty,
-                    user=request.user,
-                    house=possible_task.house,
-                    score=0  # à définir selon la logique voulue
+                    name=possible_task.name,  # Utilise le nom de la tâche possible
+                    date=timezone.now(),  # Définit la date à maintenant
+                    duration=possible_task.duration,  # Utilise la durée de la tâche possible
+                    difficulty=possible_task.difficulty,  # Utilise la difficulté de la tâche possible
+                    user=request.user,  # Associe la tâche réalisée à l'utilisateur courant
+                    house=possible_task.house,  # Associe la tâche réalisée à la maison de la tâche possible
+                    possible_task=possible_task,  # Référence la tâche possible
+                    score=0  # Définit le score à 0 (à adapter selon votre logique métier)
                 )
+                # Ajoute l'ID de la tâche réalisée à la liste des tâches créées
                 created_tasks.append(made_task.id)
 
         except HouseworkPossibleTask.DoesNotExist:
+            # Ajoute une erreur si la tâche possible n'est pas trouvée
             errors.append({"possible_task_id": possible_task_id, "error": "Possible task not found"})
 
     if errors:
+        # Retourne les erreurs si des erreurs sont survenues
         return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
-    
-    return Response({"created_tasks_ids": created_tasks}, status=status.HTTP_201_CREATED)
 
+    # Retourne les IDs des tâches créées en cas de succès
+    return Response({"created_tasks_ids": created_tasks}, status=status.HTTP_201_CREATED)
 
 
 class RemoveUserFromHouse(APIView):
