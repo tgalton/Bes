@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajouter une nouvelle tâche</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="taskForm" (ngSubmit)="submit()">
+    <ion-item>
+      <ion-label position="floating">Nom de la tâche</ion-label>
+      <ion-input formControlName="name"></ion-input>
+    </ion-item>
+    <ion-button expand="full" type="submit" [disabled]="taskForm.invalid">Ajouter</ion-button>
+  </form>
+</ion-content>

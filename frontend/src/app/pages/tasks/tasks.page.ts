@@ -17,6 +17,7 @@ import { loadHearths } from 'src/app/store/actions/hearths.actions';
 import { selectUser } from 'src/app/store/reducers/auth.reducer';
 import { selectHearthsLoaded } from 'src/app/store/selectors/hearths.selector';
 import { HeaderComponent } from '../../shared/header/header.component';
+import { AddTaskModalComponent } from './taskComponent/add-task-modal/add-task-modal.component';
 import { SelectHearthModalComponent } from './taskComponent/select-hearth-modal/select-hearth-modal.component';
 import { TaskComponent } from './taskComponent/task/task.component';
 
@@ -32,6 +33,7 @@ import { TaskComponent } from './taskComponent/task/task.component';
     FormsModule,
     HeaderComponent,
     HearthLineComponent,
+    AddTaskModalComponent,
   ],
 })
 export class TasksPage implements OnInit {
@@ -139,6 +141,32 @@ export class TasksPage implements OnInit {
     });
 
     return await modal.present();
+  }
+
+  async openAddTaskModal() {
+    const modal = await this.modalCtrl.create({
+      component: AddTaskModalComponent,
+    });
+
+    modal.onDidDismiss().then((result) => {
+      if (result.role === 'submit') {
+        const newTaskName = result.data.name;
+        const selectedHearth = this.selectedHearth$.getValue();
+        if (selectedHearth) {
+          const newTask = {
+            name: newTaskName,
+            house: selectedHearth.id,
+            duration: 1,
+            difficulty: 1,
+          };
+          this.taskService.addPossibleTask(newTask).subscribe((task) => {
+            this.listOfTasks.push(task);
+          });
+        }
+      }
+    });
+
+    await modal.present();
   }
 
   updateTaskCount(event: { taskId: number; count: number }) {

@@ -17,7 +17,12 @@ export class TaskService {
   }
 
   // Méthode pour ajouter une tâche possible
-  addPossibleTask(task: Task): Observable<Task> {
+  addPossibleTask(task: {
+    name: string;
+    house: number;
+    duration: number;
+    difficulty: number;
+  }): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/api/tasks/possible/add/`, task);
   }
 
