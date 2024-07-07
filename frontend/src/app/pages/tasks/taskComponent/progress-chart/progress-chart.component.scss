@@ -1,0 +1,83 @@
+.progress-chart {
+  color: #fff;
+
+  .chart {
+    position: relative;
+    height: 250px;
+    margin-bottom: 20px;
+
+    .chart-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: #fff;
+    }
+
+    .chart-marker {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      .pointer {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .pointer-img {
+          width: 70px;
+          height: 100px;
+        }
+
+        .avatar {
+          position: absolute;
+          top: 36%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background-color: white;
+        }
+      }
+
+      .score-top {
+        margin-bottom: 10px;
+      }
+
+      .score-bottom {
+        margin-top: 10px;
+      }
+    }
+
+    .marker-top {
+      top: calc(50% - 100px);
+    }
+
+    .marker-bottom {
+      top: calc(50% + 10px);
+    }
+  }
+
+  .chart-range-left,
+  .chart-range-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+  }
+
+  .chart-range-left {
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .chart-range-right {
+    right: 0;
+    transform: translate(50%, -50%);
+  }
+}

@@ -29,9 +29,14 @@ export class TaskService {
   // Méthode pour modifier une tâche possible
   updatePossibleTask(taskId: number, task: Partial<Task>): Observable<Task> {
     return this.http.put<Task>(
-      `${this.apiUrl}api/tasks/possible/${taskId}`,
+      `${this.apiUrl}/api/tasks/possible/${taskId}/`,
       task
     );
+  }
+
+  // Méthode pour supprimer une tâche possible
+  deletePossibleTask(taskId: number): void {
+    this.http.delete<Task>(`${this.apiUrl}/api/tasks/possible/${taskId}/`);
   }
 
   // Méthode pour récupérer toutes les tâches réalisées d'un foyer

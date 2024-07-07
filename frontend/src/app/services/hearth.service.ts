@@ -42,10 +42,10 @@ export class HearthService {
         new HearthUser(apiUser.id, apiUser.username, apiUser.avatar) // Crée des instances de HearthUser
     );
 
-    // Ajoute l'utilisateur courant s'il n'est pas déjà présent dans les utilisateurs du hearth
-    if (user && !hearthUsers.some((hu) => hu.id === user.id)) {
-      hearthUsers.push(new HearthUser(user.id, user.username, user.avatar));
-    }
+    // // Ajoute l'utilisateur courant s'il n'est pas déjà présent dans les utilisateurs du hearth
+    // if (user && !hearthUsers.some((hu) => hu.id === user.id)) {
+    //   hearthUsers.push(new HearthUser(user.id, user.username, user.avatar));
+    // }
 
     // Crée et retourne une nouvelle instance de Hearth
     return new Hearth(
@@ -121,5 +121,11 @@ export class HearthService {
           );
         })
       );
+  }
+
+  getScoreByHearth(hearthId: string): Observable<any> {
+    return this.http.get<string>(
+      `${this.apiUrl}/api/house/${hearthId}/scores/`
+    );
   }
 }

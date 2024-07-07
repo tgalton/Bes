@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import House, HouseworkPossibleTask, HouseworkMadeTask, History
+from .models import House, HouseworkPossibleTask, HouseworkMadeTask, History, Score
 from django.utils import timezone
 from django.contrib.auth.models import User
 
@@ -29,6 +29,11 @@ class HouseSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = ['user', 'hearth', 'score', 'corrected_score', 'involvement']
 
 
 class HouseworkPossibleTaskSerializer(serializers.ModelSerializer):

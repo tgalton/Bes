@@ -1,11 +1,7 @@
 <!-- tasks.component.html -->
+<app-header></app-header>
 <ion-content [fullscreen]="true">
   <div class="contener">
-    <ion-header collapse="condense">
-      <ion-toolbar>
-        <ion-title size="large">Tâche</ion-title>
-      </ion-toolbar>
-    </ion-header>
 
     <ng-container *ngIf="!isLoading; else loading">
       <ion-item button (click)="openHearthSelectionModal()">
@@ -15,6 +11,12 @@
         <ion-icon name="caret-down-outline" slot="start"></ion-icon>
       </ion-item>
 
+      <!-- New Progress Chart Component -->
+      <ng-container *ngIf="(selectedHearth$ | async) as selectedHearth">
+        <app-progress-chart [hearthId]="selectedHearth.id"></app-progress-chart>
+      </ng-container>
+
+      <!-- List of tasks availables and them counts -->
       <ion-grid [fixed]="true" class="ion-grid">
         <ng-container *ngFor="let task of listOfTasks">
           <app-task [task]="task" [count]="taskCountsToday[task.id] || 0"

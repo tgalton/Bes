@@ -7,7 +7,7 @@
   <div class="participantsContener">
     <!-- Affiche les icons des participants-->
     <div class="hearthAvatarImage" *ngFor="let hearthUser of hearth.hearthUsers">
-      <img [src]="avatarService.getAvatarPathFromName(hearthUser.avatar) | async" alt="{{ hearthUser.name }}">
+      <img [src]="avatarService.getAvatarPathFromName(hearthUser.avatar!) | async" alt="{{ hearthUser.name }}">
       <span class="user-name">{{ hearthUser.name }}</span>
     </div>
 

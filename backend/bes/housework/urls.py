@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import  HouseViewSet, HouseworkMadeTaskDateRangeView, HouseworkPossibleTaskView, RemoveUserFromHouse, generate_invitation, accept_invitation
+from .views import  HouseScoresView, HouseViewSet, HouseworkMadeTaskDateRangeView, HouseworkPossibleTaskView, RemoveUserFromHouse, generate_invitation, accept_invitation
 from django.views.decorators.csrf import csrf_exempt
 
 #Available routes
@@ -17,11 +17,16 @@ urlpatterns = [
     path('api/house/<int:house_id>/tasks/', HouseworkPossibleTaskView.as_view()),
     path('api/tasks/possible/add/', HouseworkPossibleTaskView.as_view()),
     path('api/tasks/possible/<int:task_id>/', HouseworkPossibleTaskView.as_view()),
+
     # Requête pour les tâches faîtes
     path('api/tasks/made/date-range/', HouseworkMadeTaskDateRangeView.as_view(), name='housework-made-task-date-range'),
     path('api/tasks/made/create-multiple/', views.create_multiple_made_tasks, name='create_multiple_made_tasks'),
+
     # Requêtes pour les invitation
     path('api/house/<int:house_id>/invite/', generate_invitation),
     path('api/invite/accept/<uuid:token>/', accept_invitation),
+
+    # Requête pour les scores des membres d'une maison
+    path('api/house/<int:house_id>/scores/', HouseScoresView.as_view(), name='get_house_scores'),
     
 ]

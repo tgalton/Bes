@@ -1,0 +1,18 @@
+<div class="progress-chart">
+  <div class="chart">
+    <div class="chart-line"></div>
+    <div class="chart-marker" *ngFor="let score of scores; let i = index"
+      [style.left.%]="getMarkerPosition(score.corrected_score)"
+      [ngClass]="{'marker-top': i % 2 === 0, 'marker-bottom': i % 2 !== 0}">
+      <div class="pointer">
+        <img *ngIf="i % 2 === 0" src="/assets/pointer/down_pointer_icon.png" alt="" class="pointer-img" />
+        <img *ngIf="i % 2 !== 0" src="/assets/pointer/up_pointer_icon.png" alt="" class="pointer-img" />
+        <img *ngIf="avatars[score.avatar]" [src]="avatars[score.avatar]" [alt]="score.username" class="avatar" />
+      </div>
+      <span *ngIf="i % 2 === 0" class="score-bottom">{{ score.corrected_score }} pts <br> {{ score.username }}</span>
+      <span *ngIf="i % 2 !== 0" class="score-top">{{ score.corrected_score }} pts <br> {{ score.username }}</span>
+    </div>
+    <div class="chart-range-left">{{ minScore }} pts</div>
+    <div class="chart-range-right">{{ maxScore }} pts</div>
+  </div>
+</div>

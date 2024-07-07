@@ -23,7 +23,13 @@ class House(models.Model):
     hearthUsers = models.ManyToManyField(User)
     admin_user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='house_admin_set')
     imageName = models.CharField(max_length=200, blank=True, default=None, null=True)
-    
+
+    def add_user(self, user):
+        """Add a user to the house and create their score."""
+        self.hearthUsers.add(user)
+        Score.create_score_for_user(user, self)
+        self.save()
+
     def __str__(self):
         return self.name
 
@@ -134,3 +140,34 @@ class History(models.Model):
         verbose_name_plural = "Histories"
         ordering = ["-action_date"]
     
+class Score(models.Model):
+    """
+    Object that keeps track of the amount of efforts.
+    :param user: The person who has done the efforts.
+    :param hearth: The place where this score exists.
+    :param score: The amount of realized works.
+    :param corrected_score: Score after recalculation.
+    :type hearth: models.ForeignKey
+    :type user: models.ForeignKey
+    :type score: models.IntegerField
+    :type corrected_score: models.IntegerField
+    """
+    hearth = models.ForeignKey(House, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    involvement = models.FloatField(default=1.0)
+    score = models.IntegerField(default=0)
+    corrected_score = models.FloatField(default=0)
+
+    @staticmethod
+    def create_score_for_user(user, hearth):
+        """Create a new score entry for a user in a hearth."""
+        highest_corrected_score = Score.objects.filter(hearth=hearth).order_by('-corrected_score').first()
+        corrected_score = highest_corrected_score.corrected_score if highest_corrected_score else 0
+        return Score.objects.create(user=user, hearth=hearth, corrected_score=corrected_score)
+    
+    def update_scores(self, task_score):
+        """Update the score and corrected_score for a user."""
+        self.score += task_score
+        self.corrected_score += task_score * (1 / self.involvement)
+        self.save()
+

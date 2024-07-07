@@ -18,6 +18,7 @@ import { selectUser } from 'src/app/store/reducers/auth.reducer';
 import { selectHearthsLoaded } from 'src/app/store/selectors/hearths.selector';
 import { HeaderComponent } from '../../shared/header/header.component';
 import { AddTaskModalComponent } from './taskComponent/add-task-modal/add-task-modal.component';
+import { ProgressChartComponent } from './taskComponent/progress-chart/progress-chart.component';
 import { SelectHearthModalComponent } from './taskComponent/select-hearth-modal/select-hearth-modal.component';
 import { TaskComponent } from './taskComponent/task/task.component';
 
@@ -34,6 +35,7 @@ import { TaskComponent } from './taskComponent/task/task.component';
     HeaderComponent,
     HearthLineComponent,
     AddTaskModalComponent,
+    ProgressChartComponent,
   ],
 })
 export class TasksPage implements OnInit {

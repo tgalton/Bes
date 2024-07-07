@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from .models import House, HouseInvitation, HouseworkMadeTask, HouseworkPossibleTask
-from .serializers import HouseSerializer, HouseworkMadeTaskDateRangeSerializer, HouseworkPossibleTaskSerializer
+from .models import House, HouseInvitation, HouseworkMadeTask, HouseworkPossibleTask, Score
+from .serializers import HouseSerializer, HouseworkMadeTaskDateRangeSerializer, HouseworkPossibleTaskSerializer, ScoreSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -70,7 +70,6 @@ class HouseViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        # On crée une nouvelle maison avec les paramètres par défaut
         default_name = "Nouveau foyer"
         default_image_name = "defaultHouse"
         user = request.user
@@ -79,8 +78,7 @@ class HouseViewSet(viewsets.ViewSet):
             admin_user=user,
             imageName=default_image_name
         )
-        house.hearthUsers.add(user)  # Ajoute également l'utilisateur comme membre de la maison
-        house.save()
+        house.add_user(user)
         serializer = HouseSerializer(house)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -220,14 +218,12 @@ def accept_invitation(request, token):
         return Response({'error': 'Invalid or expired token'}, status=status.HTTP_404_NOT_FOUND)
     
     house = invitation.house
-    if request.user in house.users.all():
+    if request.user in house.hearthUsers.all():
         return Response({'message': 'You are already a member of this house'}, status=status.HTTP_400_BAD_REQUEST)
 
-    house.users.add(request.user)
-    house.save()
+    house.add_user(request.user)
     invitation.delete()  # Optionally delete the invitation after use
     return Response({'message': f'You have joined {house.name}'}, status=status.HTTP_200_OK)
-
 
 # Récupère la liste des tâches réalisées entre deux dates :
 # Cette vue filtre les instances de HouseworkMadeTask sur la base des paramètres start_date, end_date, et house_id.
@@ -268,6 +264,9 @@ class HouseworkMadeTaskDateRangeView(views.APIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_multiple_made_tasks(request):
+    """
+    Permet d'enregistrer une liste de tâches réalisées à son nom.
+    """
     # Extrait les données de la requête
     task_list = request.data
 
@@ -289,6 +288,13 @@ def create_multiple_made_tasks(request):
                 errors.append({"possible_task_id": possible_task_id, "error": "User is not a member of the house"})
                 continue
 
+            # Obtenir ou créer le score de l'utilisateur pour la maison
+            score_entry, created = Score.objects.get_or_create(
+                user=request.user,
+                hearth=possible_task.house,
+                defaults={'involvement': 1.0, 'score': 0, 'corrected_score': 0}
+            )
+
             # Crée les tâches réalisées en fonction du nombre spécifié
             for _ in range(count):
                 made_task = HouseworkMadeTask.objects.create(
@@ -299,10 +305,13 @@ def create_multiple_made_tasks(request):
                     user=request.user,  # Associe la tâche réalisée à l'utilisateur courant
                     house=possible_task.house,  # Associe la tâche réalisée à la maison de la tâche possible
                     possible_task=possible_task,  # Référence la tâche possible
-                    score=0  # Définit le score à 0 (à adapter selon votre logique métier)
+                    score=possible_task.duration * possible_task.difficulty  # Calcule le score basé sur la durée et la difficulté
                 )
                 # Ajoute l'ID de la tâche réalisée à la liste des tâches créées
                 created_tasks.append(made_task.id)
+
+                # Met à jour le score de l'utilisateur
+                score_entry.update_scores(made_task.score)
 
         except HouseworkPossibleTask.DoesNotExist:
             # Ajoute une erreur si la tâche possible n'est pas trouvée
@@ -314,6 +323,7 @@ def create_multiple_made_tasks(request):
 
     # Retourne les IDs des tâches créées en cas de succès
     return Response({"created_tasks_ids": created_tasks}, status=status.HTTP_201_CREATED)
+
 
 
 class RemoveUserFromHouse(APIView):
@@ -342,4 +352,36 @@ class RemoveUserFromHouse(APIView):
 
         return Response({"message": f"L'utilisateur {user_to_remove.username} a été retiré de {house.name}"}, status=status.HTTP_204_NO_CONTENT)
 
+class HouseScoresView(APIView):
+    """
+    API endpoint that allows retrieving scores of all users in a house,
+    provided the requesting user is a member of that house.
+    """
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, house_id):
+        """
+        Handle GET request to retrieve scores of all users in a house.
+        
+        :param request: The HTTP request object.
+        :param house_id: The ID of the house for which to retrieve scores.
+        :return: A JSON response with scores of all users in the house.
+        """
+        try:
+            # Try to fetch the house by its ID
+            house = House.objects.get(pk=house_id)
+        except House.DoesNotExist:
+            # Return a 404 error if the house does not exist
+            return Response({'error': 'House not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Check if the requesting user is a member of the house
+        if not house.hearthUsers.filter(id=request.user.id).exists():
+            # Return a 403 error if the user is not a member of the house
+            return Response({'error': 'Access denied: You are not a member of this house'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Fetch the scores for all users in the house
+        scores = Score.objects.filter(hearth=house)
+        # Serialize the scores data
+        serializer = ScoreSerializer(scores, many=True)
+        # Return the serialized data in the response
+        return Response(serializer.data)
