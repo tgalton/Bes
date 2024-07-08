@@ -72,17 +72,18 @@ export class LoginPage {
     control: FormControl
   ): { [key: string]: boolean } | null {
     const value = control.value;
-    if (!value) {
-      return null;
-    }
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasLowerCase = /[a-z]/.test(value);
-    const hasNumeric = /[0-9]/.test(value);
-    const hasSpecial = /[!@#\$%\^\&*\)\(+=._-]/.test(value);
-    if (hasUpperCase && hasLowerCase && hasNumeric && hasSpecial) {
-      return null;
-    }
-    return { passwordStrength: true };
+    // if (!value) {
+    //   return null;
+    // }
+    // const hasUpperCase = /[A-Z]/.test(value);
+    // const hasLowerCase = /[a-z]/.test(value);
+    // const hasNumeric = /[0-9]/.test(value);
+    // const hasSpecial = /[!@#\$%\^\&*\)\(+=._-]/.test(value);
+    // if (hasUpperCase && hasLowerCase && hasNumeric && hasSpecial) {
+    //   return null;
+    // }
+    // return { passwordStrength: true };
+    return null;
   }
 
   login() {

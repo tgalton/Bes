@@ -1,5 +1,6 @@
 .progress-chart {
   color: #fff;
+  padding-bottom: 1em;
 
   .chart {
     position: relative;
@@ -35,8 +36,6 @@
 
         .avatar {
           position: absolute;
-          top: 36%;
-          left: 50%;
           transform: translate(-50%, -50%);
           width: 60px;
           height: 60px;
@@ -56,17 +55,25 @@
 
     .marker-top {
       top: calc(50% - 100px);
+      .avatar {
+        top: 36%;
+        left: 50%;
+      }
     }
 
     .marker-bottom {
       top: calc(50% + 10px);
+      .avatar {
+        top: 64%;
+        left: 50%;
+      }
     }
   }
 
   .chart-range-left,
   .chart-range-right {
     position: absolute;
-    top: 50%;
+    top: 56%;
     transform: translateY(-50%);
     font-size: 12px;
   }
