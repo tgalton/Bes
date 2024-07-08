@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -13,7 +19,7 @@ import { ScoreService } from 'src/app/services/score.service';
   standalone: true,
   imports: [IonicModule, CommonModule],
 })
-export class ProgressChartComponent implements OnInit {
+export class ProgressChartComponent implements OnInit, OnChanges {
   @Input() hearthId!: number;
   scores: any[] = [];
   avatars: { [key: string]: string } = {};
@@ -29,11 +35,18 @@ export class ProgressChartComponent implements OnInit {
     this.loadScores();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['hearthId'] && !changes['hearthId'].firstChange) {
+      this.loadScores();
+    }
+  }
+
   loadScores() {
     this.scoreService.getScoreByHearth(this.hearthId).subscribe((scores) => {
       this.scores = scores;
       this.updateScoreRange();
       this.loadAvatars();
+      this.animateScores();
     });
   }
 
@@ -64,5 +77,17 @@ export class ProgressChartComponent implements OnInit {
 
   getMarkerPosition(score: number): number {
     return ((score - this.minScore) / (this.maxScore - this.minScore)) * 100;
+  }
+
+  animateScores() {
+    const markers = document.querySelectorAll('.chart-marker');
+    markers.forEach((marker) => {
+      marker.classList.add('animate');
+      setTimeout(() => marker.classList.remove('animate'), 1000); // Animation dure 1 seconde
+    });
+  }
+
+  ngAfterViewInit() {
+    this.animateScores();
   }
 }

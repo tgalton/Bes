@@ -66,6 +66,8 @@ export class TasksPage implements OnInit {
 
   private updateSubject = new BehaviorSubject<void>(undefined);
 
+  @ViewChild(ProgressChartComponent) progressChart!: ProgressChartComponent;
+
   constructor(
     private modalCtrl: ModalController,
     private store: Store,
@@ -199,6 +201,7 @@ export class TasksPage implements OnInit {
         () => {
           console.log('Tasks updated successfully');
           this.updateTasksCountToday(); // Mise à jour après soumission
+          this.progressChart.loadScores(); // Actualisation du graphique
         },
         (error) => {
           console.error('Error updating tasks:', error);
