@@ -1,8 +1,9 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, importProvidersFrom } from '@angular/core';
 import {
   bootstrapApplication,
   provideClientHydration,
 } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importer BrowserAnimationsModule
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
 import {
   IonicRouteStrategy,
@@ -48,6 +49,7 @@ bootstrapApplication(AppComponent, {
     provideClientHydration(),
     provideEffects([AuthEffects, UserEffects, HearthEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
+    importProvidersFrom(BrowserAnimationsModule), // Ajouter BrowserAnimationsModule ici
     AuthService,
   ],
 });

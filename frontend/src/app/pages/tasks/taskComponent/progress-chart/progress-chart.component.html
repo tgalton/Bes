@@ -2,7 +2,7 @@
   <div class="chart">
     <div class="chart-line"></div>
     <div class="chart-marker" *ngFor="let score of scores; let i = index"
-      [style.left.%]="getMarkerPosition(score.corrected_score)"
+      [@markerMove]="{ value: 'move', params: { left: getMarkerPosition(score.corrected_score) } }"
       [ngClass]="{'marker-top': i % 2 === 0, 'marker-bottom': i % 2 !== 0}">
       <div class="pointer">
         <img *ngIf="i % 2 === 0" src="/assets/pointer/down_pointer_icon.png" alt="" class="pointer-img" />

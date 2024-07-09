@@ -1,3 +1,10 @@
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -16,6 +23,18 @@ import { ScoreService } from 'src/app/services/score.service';
   selector: 'app-progress-chart',
   templateUrl: './progress-chart.component.html',
   styleUrls: ['./progress-chart.component.scss'],
+  animations: [
+    trigger('markerMove', [
+      state(
+        'move',
+        style({
+          left: '{{left}}%',
+        }),
+        { params: { left: 0 } }
+      ),
+      transition('* => move', [animate('1s ease-in-out')]),
+    ]),
+  ],
   standalone: true,
   imports: [IonicModule, CommonModule],
 })
@@ -46,7 +65,6 @@ export class ProgressChartComponent implements OnInit, OnChanges {
       this.scores = scores;
       this.updateScoreRange();
       this.loadAvatars();
-      this.animateScores();
     });
   }
 
@@ -77,17 +95,5 @@ export class ProgressChartComponent implements OnInit, OnChanges {
 
   getMarkerPosition(score: number): number {
     return ((score - this.minScore) / (this.maxScore - this.minScore)) * 100;
-  }
-
-  animateScores() {
-    const markers = document.querySelectorAll('.chart-marker');
-    markers.forEach((marker) => {
-      marker.classList.add('animate');
-      setTimeout(() => marker.classList.remove('animate'), 1000); // Animation dure 1 seconde
-    });
-  }
-
-  ngAfterViewInit() {
-    this.animateScores();
   }
 }
