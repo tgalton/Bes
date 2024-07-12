@@ -1,0 +1,28 @@
+# Étape 1 : Construction de l'application Angular
+FROM node:18 AS build
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+
+# Installer les dépendances en utilisant legacy-peer-deps pour éviter les conflits de dépendances
+RUN npm install --legacy-peer-deps
+
+COPY . .
+
+# Construire l'application pour la production
+RUN npm run build --prod
+
+# Étape 2 : Servir l'application avec Nginx
+FROM nginx:alpine
+
+# Copier les fichiers construits de l'étape précédente
+COPY --from=build /app/dist/app /usr/share/nginx/html
+
+
+# Exposer le port utilisé par Nginx
+EXPOSE 80
+
+# Démarrer Nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+

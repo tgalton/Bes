@@ -1,0 +1,24 @@
+# Utiliser l'image officielle de Python
+FROM python:3.9-slim
+
+# Installer Poetry
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -sSL https://install.python-poetry.org | python3 - \
+    && apt-get clean
+
+# Ajouter Poetry au PATH
+ENV PATH="/root/.local/bin:$PATH"
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de l'application
+COPY pyproject.toml poetry.lock /app/
+COPY . /app
+
+# Installer les dépendances
+RUN poetry install --no-root
+
+# Commande pour lancer l'application
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "bes.wsgi:application"]

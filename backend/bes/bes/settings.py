@@ -9,24 +9,31 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Construction des chemins internes comme BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Clé secrète Django (assurez-vous de la garder secrète)
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-n=136h)2renqhjl1k+4e4vmd)y5)3vgd&a2aq5u@-^^xezu_4v')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+# Mode Debug (à désactiver en production)
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n=136h)2renqhjl1k+4e4vmd)y5)3vgd&a2aq5u@-^^xezu_4v'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://127.0.0.1']
+# Définition de la base de données
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('MYSQL_DATABASE', 'mydatabase'),
+        'USER': os.getenv('MYSQL_USER', 'myuser'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'mypassword'),
+        'HOST': os.getenv('MYSQL_HOST', 'db'),
+        'PORT': os.getenv('MYSQL_PORT', '3306'),
+    }
+}
 
 
 # Application definition

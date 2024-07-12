@@ -29,3 +29,21 @@ Then to run the project, run `poetry run python manage.py runserver`.
 If the database does not exist, run `poetry run python manage.py migrate`.
 If you want to create a super user in the database, run `poetry run python manage.py createsuperuser`.
 If change in models, dont forget to apply `poetry run python manage.py makemigrations`.
+
+### Build server
+
+From local terminal
+`scp mysql_image.tar pi@192.168.1.29:/home/pi/`
+`scp docker-compose.yml pi@192.168.1.29:/home/pi/`
+`scp django_image.tar pi@192.168.1.29:/home/pi/`
+`pscp C:/Users/galto/Documents/Bes/Bes/docker-compose.yml pi@192.168.1.29:/home/pi/`
+`pscp C:/Users/galto/Documents/Bes/Bes/.env pi@192.168.1.29:/home/pi/`
+From SSH to rasberry
+`docker load -i /home/pi/django_image.tar`
+`docker load -i /home/pi/angular_image.tar`
+`docker load -i /home/pi/mysql_image.tar`
+`docker-compose up -d`
+
+Transmettre le code au rasberry
+scp -r backend pi@192.168.1.29:/home/pi/backend
+scp -r frontend pi@192.168.1.29:/home/pi/frontend
